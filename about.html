@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>チーム紹介 | 光一天</title>
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared/site-nav.css">
+  <style>
+    :root {
+      --primary: #facc15; --primary-hover: #eab308; --anniv-color: #ef4444;
+      --bg-main: #f5f5f7; --bg-surface: #ffffff;
+      --text-main: #1d1d1f; --text-sub: #86868b;
+      --line: #e5e5ea; --shadow: 0 10px 40px rgba(0,0,0,0.06);
+      --nav-height: 64px; --font-serif: 'Shippori Mincho', serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Noto Sans JP', sans-serif; background-color: var(--bg-main); color: var(--text-main); line-height: 1.6; padding-top: var(--nav-height); }
+    h1, h2, h3, .serif { font-family: var(--font-serif); }
+
+    .page-header { padding: 3rem 4% 1.8rem; text-align: center; }
+    .page-title { font-size: clamp(2.4rem, 7vw, 3.8rem); font-weight: 800; color: var(--text-main); margin-bottom: 1rem; }
+
+    section { padding: 2rem 4%; max-width: 900px; margin: 0 auto; }
+    .glass-card { background: var(--bg-surface); border-radius: 24px; padding: 1.8rem; margin-bottom: 2rem; box-shadow: var(--shadow); }
+    .glass-card h3 { color: var(--text-main); font-size: 1.5rem; margin-bottom: 1.5rem; border-bottom: 2px solid var(--primary); display: inline-block; padding-bottom: 4px; }
+    .glass-card p { font-size: 1.05rem; line-height: 1.9; margin-bottom: 1.5rem; color: #333; }
+
+    .timeline { border-left: 2px solid var(--primary); padding-left: 1.4rem; margin: 1.5rem 0 3rem 1rem; }
+    .timeline-item { position: relative; margin-bottom: 1.8rem; }
+    .timeline-item::before { content: ''; position: absolute; left: -2.05rem; top: 0.5rem; width: 10px; height: 10px; background: var(--primary); border-radius: 50%; }
+    .timeline-year { font-weight: 800; color: var(--text-main); font-size: 1.15rem; margin-bottom: 0.5rem; }
+    .timeline-content { background: var(--bg-surface); padding: 0.9rem 1.25rem; border-radius: 12px; border: 1px solid var(--line); font-size: 0.95rem; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+    .fade-up { opacity: 0; transform: translateY(20px); transition: 0.6s ease-out; }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 860px) {
+      .page-header { padding: 2rem 5% 1rem; }
+      section { padding: 1rem 5% 2.5rem; }
+      .glass-card { border-radius: 18px; padding: 1.2rem; }
+      .glass-card p { font-size: 0.98rem; line-height: 1.8; }
+      .timeline { margin: 1rem 0 2rem 0.4rem; padding-left: 1rem; }
+      .timeline-item::before { left: -1.55rem; width: 9px; height: 9px; }
+      .timeline-year { font-size: 1.05rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="site-nav">
+    <a href="index.html" class="nav-logo-container">
+      <div id="logo-area"></div>
+      <span class="nav-logo-text">光一天</span>
+    </a>
+    <div class="nav-links" id="nav-menu">
+      <a href="index.html">Home</a>
+      <a href="about.html" class="active">チーム紹介</a>
+      <a href="works.html">作品一覧</a>
+      <a href="news.html">お知らせ</a>
+      <a href="contact.html">連絡先</a>
+      <a href="10th-anniv.html" class="nav-anniv-btn">10周年記念公演</a>
+      <a href="sponsors.html" class="nav-sponsors-btn">協賛</a>
+    </div>
+    <div class="hamburger" onclick="toggleMenu()" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <header class="page-header">
+    <h1 class="page-title serif fade-up">チーム紹介</h1>
+  </header>
+
+  <section>
+    <div class="glass-card fade-up">
+      <h3 class="serif">光一天とは</h3>
+      <p>光一天とは、公立千歳科学技術大学YOSAKOIソーラン部の学生と千歳や札幌の社会人によって構成されるYOSAKOIソーランチームです。</p>
+      
+      <h3 class="serif">光一天の由来</h3>
+      <p>光一天の語源は紅一点で、「多くのものの中で、ただ一つ異彩をはなつもの」という意味があります。\n
+      メンバーは、「光」の知識を基盤に応用技術を学ぶ大学生であり、天からさした一筋の光の様に想いが昇っていく…というイメージで、「光一天」と名づけられました。</p>
+    </div>
+
+    <h2 class="serif fade-up" style="font-size: 2rem; text-align: center; margin-bottom: 2rem;">光一天の歴史</h2>
+    <div class="timeline fade-up" id="history-list"></div>
+
+    <h2 class="serif fade-up" style="font-size: 2rem; text-align: center; margin-bottom: 2rem;">受賞歴</h2>
+    <div class="timeline fade-up" id="awards-list"></div>
+  </section>
+
+  <footer style="text-align:center; padding:4rem; color:var(--text-sub); border-top:1px solid var(--line); background:white;">
+    <p>&copy; 2026 公立千歳科学技術大学 光一天.</p>
+  </footer>
+
+  <script src="shared/site-shell.js"></script>
+  <script>
+    // デフォルトデータ（CMSが空の場合に表示されます）
+    const defaultHistory = [
+      { year: "2003年", content: "千歳科学技術大学YOSAKOIソーランサークルとして創立。「恭賀千極と風 feat.千歳科学技術大学」として活動。" },
+      { year: "2005年", content: "大学公認の部活動へと昇格。千歳科学技術大学YOSAKOIソーラン部「光一天」として独立。" },
+      { year: "2006年", content: "YOSAKOIソーラン祭に「光一天」で初出場。同年、夕張学生連盟『WARM』加盟。" },
+      { year: "2007年", content: "夕張学生連盟『WARM』として本祭出場。同年10月夕張学生連盟『WARM』脱退。" },
+      { year: "2008年", content: "「遨～すさび～」で本祭出場。" },
+      { year: "2009年", content: "合同チーム「遨～すさび～＆光一天」が形成される。" },
+      { year: "2015年", content: "千歳科学技術大学 稜輝祭にて、独立10周年記念演舞を行う。" },
+      { year: "2017年", content: "「遨～すさび～」と独立し、千歳科学技術大学YOSAKOIソーラン部「光一天」として活動開始。" }
+    ];
+
+    const defaultAwards = [
+      { year: "2024年 『臨剋（りんこく）』", text: "第33回YOSAKOIソーラン祭り U-40 『優秀賞』" },
+      { year: "2022年 『啓天（ひぞら）』", text: "第25回みちのくYOSAKOIまつり ファイナル進出 『第3位』仙台市長賞" },
+      { year: "2019年 『黎明（しののめ）』", text: "第21回ちとせトーナメント セミトーナメント 『ベスト6』" },
+      { year: "2018年 『嵐奏（らんか）』", text: "第20回ちとせトーナメント 『ベスト16』\n第21回みちのくYOSAKOIまつり ファイナル進出 『第4位』" },
+      { year: "2017年 『灼耀（あすか）』", text: "第26回YOSAKOIソーラン祭り 『敢闘賞』\n第19回ちとせトーナメント 『ベスト8』『レラ賞』\n第20回みちのくYOSAKOIまつり ファイナル進出 『第3位』仙台市長賞" },
+      { year: "2016年 『神瑞（かずい）』", text: "第25回YOSAKOIソーラン祭り セミファイナル進出\n第26回石狩川フェスティバル水祭 『準グランプリ』\n第19回みちのくYOSAKOIまつり ファイナル進出 『第4位』" },
+      { year: "2015年 『嵩音（かさね）』", text: "第24回YOSAKOIソーラン祭り セミファイナル進出 『第3位』\n第25回石狩川フェスティバル水祭 『王座』\n第17回ちとせトーナメント 『ベスト16』\n第18回みちのくYOSAKOIまつり ファイナル進出 『第7位』" },
+      { year: "2014年 『神煒（しんき）』", text: "第23回YOSAKOIソーラン祭り セミファイナル進出 『第3位』\n第24回石狩川フェスティバル水祭 『王座』\n第16回ちとせトーナメント 『ベスト8』\n第16回上川中央支部大会 『準大賞』" },
+      { year: "2013年 『ラマッタクリムセ』", text: "第22回YOSAKOIソーラン祭り 『一次審査員賞』\n第15回ちとせトーナメント 『優勝』\n第15回上川中央支部大会 『大賞』" },
+      { year: "2012年 『晶華(しょうか)』", text: "第21回YOSAKOIソーラン祭り セミファイナル進出 『第4位』\n第14回ちとせトーナメント 『優勝』\n第14回上川中央支部大会 『大賞』" },
+      { year: "2011年 『花神風（かしんふう）』", text: "第20回YOSAKOIソーラン祭り 『一次審査員賞』\n第13回上川中央支部大会 『大賞』" },
+      { year: "2010年 『依処(よすが)』", text: "第19回YOSAKOIソーラン祭り 『一次審査員賞』" },
+      { year: "2009年 『紬（つむぎ）』", text: "第18回YOSAKOIソーラン祭り セミファイナル進出 『第9位』" },
+      { year: "2008年 『紲（きずな）』", text: "第17回YOSAKOIソーラン祭り 『新人賞』『敢闘賞』" }
+    ];
+
+    async function init() {
+      await loadSharedLogo();
+
+      try {
+        const res = await fetch('/api/content?type=about', { cache: 'no-cache' });
+        let data = await res.json();
+        
+        // データが空ならデフォルトを使用
+        if(!data.history || data.history.length === 0) data.history = defaultHistory;
+        if(!data.awards || data.awards.length === 0) data.awards = defaultAwards;
+
+        const renderTimeline = (arr, containerId) => {
+            const container = document.getElementById(containerId);
+            container.innerHTML = arr.map(a => `
+                <div class="timeline-item">
+                <div class="timeline-year serif">${a.year}</div>
+                <div class="timeline-content">${String(a.text || a.content || '').replace(/<br\s*\/?>/gi, '\n')}</div>
+                </div>
+            `).join('');
+        };
+
+        renderTimeline(data.history, 'history-list');
+        renderTimeline(data.awards, 'awards-list');
+
+      } catch(e) {
+        // エラー時もデフォルトを表示
+        const renderTimeline = (arr, containerId) => {
+            document.getElementById(containerId).innerHTML = arr.map(a => `
+                <div class="timeline-item"><div class="timeline-year serif">${a.year}</div><div class="timeline-content">${String(a.text || a.content || '').replace(/<br\s*\/?>/gi, '\n')}</div></div>
+            `).join('');
+        };
+        renderTimeline(defaultHistory, 'history-list');
+        renderTimeline(defaultAwards, 'awards-list');
+      }
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => { if(entry.isIntersecting) entry.target.classList.add('visible'); });
+      }, { threshold: 0.1 });
+      document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+    }
+    init();
+  </script>
+  <script src="anniv-visibility.js"></script>
+</body>
+</html>

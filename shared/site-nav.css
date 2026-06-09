@@ -1,0 +1,206 @@
+/**
+ * Fixed site header — shared across public pages.
+ * Each page should define :root --nav-height, --primary-hover, --anniv-color,
+ * --text-main, --bg-surface, --font-serif (optional: --ease-apple, --primary).
+ */
+
+.site-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: var(--nav-height, 64px);
+  padding: 10px 5%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+}
+
+.nav-logo-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  min-height: calc(var(--nav-height, 64px) - 20px);
+  flex-shrink: 0;
+}
+
+.nav-logo-img {
+  height: 36px;
+  width: auto;
+  object-fit: contain;
+}
+
+.nav-logo-text {
+  font-family: var(--font-serif, serif);
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--text-main, #1d1d1f);
+  line-height: 1;
+  transform: translateY(-2px);
+}
+
+.nav-links {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.55rem 1.25rem;
+  align-self: center;
+}
+
+.nav-links a {
+  color: var(--text-main, #1d1d1f);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 700;
+  transition: color 0.2s;
+  position: relative;
+}
+
+.nav-links a:hover {
+  color: var(--primary-hover, #eab308);
+}
+
+.nav-links a.active {
+  color: var(--primary-hover, #eab308);
+}
+
+.nav-links a.active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 2px;
+  background: var(--primary-hover, #eab308);
+  border-radius: 2px;
+}
+
+.nav-anniv-btn {
+  color: #fff !important;
+  background: var(--anniv-color, #ef4444);
+  padding: 0.55rem 1.2rem;
+  border-radius: 50px;
+  font-size: 0.8rem !important;
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3);
+  display: none;
+}
+
+/* CMS の「表示管理」で公開時のみ表示（協賛ページ） */
+.nav-sponsors-btn {
+  display: none;
+}
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  z-index: 1100;
+  padding: 10px;
+  margin: 0;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+}
+
+.hamburger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--text-main, #1d1d1f);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+@media (max-width: 860px) {
+  .hamburger {
+    display: flex;
+  }
+
+  .nav-links {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 82%;
+    max-width: 340px;
+    height: 100vh;
+    height: 100dvh;
+    background: var(--bg-surface, #ffffff);
+    flex: none;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: stretch;
+    gap: 2.5rem;
+    transition: right 0.4s var(--ease-apple, cubic-bezier(0.28, 0.11, 0.32, 1));
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+    padding: 24px;
+    box-sizing: border-box;
+  }
+
+  .nav-links a {
+    font-size: 1.1rem;
+    padding: 10px;
+    text-align: center;
+  }
+
+  .nav-links.active {
+    right: 0;
+  }
+
+  .hamburger.active span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .hamburger.active span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .hamburger.active span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+}
+
+/* Dark navigation (e.g. 10周年記念ページ) */
+body[data-nav-theme="dark"] .site-nav {
+  background: rgba(5, 5, 5, 0.95);
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+body[data-nav-theme="dark"] .nav-logo-text {
+  color: var(--primary, #facc15);
+}
+
+body[data-nav-theme="dark"] .nav-links a {
+  color: #f8fafc;
+}
+
+body[data-nav-theme="dark"] .nav-links a:hover,
+body[data-nav-theme="dark"] .nav-links a.active {
+  color: var(--primary, #facc15);
+}
+
+body[data-nav-theme="dark"] .nav-links a.active::after {
+  background: var(--primary, #facc15);
+}
+
+body[data-nav-theme="dark"] .hamburger span {
+  background: #f8fafc;
+}
+
+@media (max-width: 860px) {
+  body[data-nav-theme="dark"] .nav-links {
+    background: rgba(5, 5, 5, 0.98);
+  }
+}

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>光一天 CMS</title>
+    <link rel="stylesheet" href="admin/admin.css">
+</head>
+<body>
+
+  <div id="login-screen">
+    <div class="login-box">
+      <h2 style="margin-bottom:20px;">光一天 CMS</h2>
+      <input type="text" id="user" placeholder="ユーザー名">
+      <input type="password" id="pass" placeholder="パスワード">
+      <button onclick="checkAuth()">ログイン</button>
+      <p id="login-err" style="color:red; font-size:0.8rem; margin-top:10px;"></p>
+    </div>
+  </div>
+
+  <div id="cms-screen">
+    <header>
+      <div class="header-top">
+        <h2 style="margin:0; font-size:1.3rem;">光一天 CMS</h2>
+        <button onclick="toggleAdminMenu()" style="width:auto; padding: 8px 16px; margin:0; background:#1d1d1f; color:#fff; border-radius:8px;">≡ メニュー</button>
+      </div>
+      <div class="tabs collapsed" id="admin-tabs">
+        <button class="tab-btn active" onclick="switchTab(event, 'news')">お知らせ</button>
+        <button class="tab-btn" onclick="switchTab(event, 'works')">作品一覧</button>
+        <button class="tab-btn" onclick="switchTab(event, 'about')">チーム紹介</button>
+        <button class="tab-btn" onclick="switchTab(event, 'media')">固定画像管理</button>
+        <button class="tab-btn" onclick="switchTab(event, 'visibility')">表示管理</button>
+        <button class="tab-btn" onclick="switchTab(event, 'trash')">ゴミ箱</button>
+        <button onclick="location.reload()" style="width:auto; background:#eee; color:#333;">ログアウト</button>
+      </div>
+    </header>
+
+    <div class="container">
+      
+      <!-- お知らせ管理 -->
+      <div id="news-panel" class="panel active">
+        <div style="display:flex; justify-content:space-between; margin-bottom:20px; align-items:center; flex-wrap:wrap; gap:10px;">
+          <h3 style="margin:0;">お知らせ一覧</h3>
+          <button style="width:auto; margin:0;" onclick="editNews(null)">+ 新規作成</button>
+        </div>
+        <div id="news-editor" class="editor-panel">
+          <div id="news-editor-status" class="editor-status"></div>
+          <h3 id="news-editor-title" style="margin-top:0;">記事を編集</h3>
+          <input type="hidden" id="news-id">
+          <div class="form-group"><label>タイトル</label><input type="text" id="news-title"></div>
+          <div class="form-group"><label>日付 (YYYY-MM-DD)</label><input type="date" id="news-date"></div>
+          <div class="form-group">
+            <label>タグ（候補から選ぶか、新しいタグをそのまま入力）</label>
+            <input type="text" id="news-tag" list="news-tag-options" autocomplete="off" placeholder="タグを選択または入力" style="width:100%;max-width:420px;">
+            <datalist id="news-tag-options"></datalist>
+          </div>
+          <div class="form-group">
+            <label>お知らせ用画像（複数可）</label>
+            <div id="news-images-list" style="margin-bottom: 10px;"></div>
+            <div class="inline-upload">
+              <div style="flex:1;">
+                <p style="margin:0 0 5px 0; font-size:0.85rem; color:#555;">パソコン・スマホから画像を選択して追加：</p>
+                <input type="file" id="news-inline-file">
+              </div>
+              <button onclick="inlineUploadNewsImage('news-inline-file', 'news')">画像を追加</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>関連リンク（埋め込みプレビュー）</label>
+            <div id="news-links-list" style="margin-bottom: 10px;"></div>
+            <div style="display:flex; gap:10px;">
+              <input type="text" id="news-link-input" placeholder="https://..." style="flex:1;">
+              <button style="width:auto; white-space:nowrap;" onclick="addNewsLink()">リンクを追加</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>サムネイル選択（一覧表示用）</label>
+            <select id="news-thumbnail-select">
+              <option value="">設定しない（デフォルト）</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label style="display:flex; align-items:center; gap:8px;">
+              <input type="checkbox" id="news-pinned" style="width:auto; margin:0;"> トップページに固定する
+            </label>
+          </div>
+          <div class="form-group"><label>本文</label><textarea id="news-body"></textarea></div>
+          <div style="display:flex; gap:10px; margin-top:14px;">
+            <button onclick="saveNews()">保存する</button>
+            <button onclick="closeEditor('news')" class="btn-secondary">キャンセル</button>
+          </div>
+        </div>
+
+        <div id="news-list" style="margin-top:20px;"></div>
+      </div>
+
+      <!-- 作品管理 -->
+      <div id="works-panel" class="panel">
+        <div style="display:flex; justify-content:space-between; margin-bottom:20px; align-items:center; flex-wrap:wrap; gap:10px;">
+          <h3 style="margin:0;">作品一覧</h3>
+          <button style="width:auto; margin:0;" onclick="editWork(null)">+ 新規追加</button>
+        </div>
+
+        <div id="works-editor" style="display:none; padding:20px; border:1px solid #ddd; background:#fff; margin-bottom:28px;">
+          <div id="works-editor-status" style="display:none; font-size:0.95rem; color:#1d4ed8; margin-bottom:12px;"></div>
+          <h3 id="works-editor-title" style="margin-top:0;">作品を編集</h3>
+          <input type="hidden" id="work-id">
+          <div class="form-group"><label>公開年</label><input type="text" id="work-year" placeholder="例: 2026"></div>
+          <div class="form-group"><label>タイトル</label><input type="text" id="work-title" placeholder="例: 一鳳（かげは）"></div>
+          <div class="form-group"><label>概要 (一覧用)</label><textarea id="work-story" style="min-height:80px;"></textarea></div>
+          <div class="form-group">
+            <label>メイン画像URL (詳細ページ用)</label>
+            <input type="text" id="work-image" placeholder="アップロードするとここにURLが自動入力されます" readonly style="background:#f9f9f9; color:#888;">
+            <div class="inline-upload">
+              <div style="flex:1;">
+                <p style="margin:0 0 5px 0; font-size:0.85rem; color:#555;">パソコン・スマホから画像を選択：</p>
+                <input type="file" id="work-inline-file">
+              </div>
+              <button onclick="inlineUpload('work-inline-file', 'work-image', 'works')">アップロード</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>詳細ページのセクション（見出し＋本文）</label>
+            <p style="margin:0 0 10px; font-size:0.88rem; color:#555; line-height:1.5;">「テーマ」「歌詞」「語り」など、ブロックを追加して入力してください。保存するとサイト側ではモダンなカード表示になります。</p>
+            <div id="work-sections-list"></div>
+            <button type="button" class="btn-secondary" style="width:auto; margin-top:6px;" onclick="addWorkSectionRow()">＋ セクションを追加</button>
+          </div>
+          <details style="margin-top:14px; padding:12px; background:#f6f6f8; border-radius:10px;">
+            <summary style="cursor:pointer; font-weight:700;">レガシー：詳細を1つのテキストで保持（上級者・インポート用）</summary>
+            <p style="font-size:0.85rem; color:#666; margin:10px 0;">通常は上のセクションのみ編集してください。ここは旧データ互換・一括貼り付け用です。</p>
+            <textarea id="work-body" style="min-height:120px;"></textarea>
+          </details>
+          <div class="form-group"><label>受賞歴 (カンマ区切りで複数入力)</label><input type="text" id="work-awards" placeholder="例: 大賞, 優秀賞"></div>
+          <div style="display:flex; gap:10px; margin-top:14px;">
+            <button onclick="saveWork()">保存する</button>
+            <button onclick="closeEditor('works')" class="btn-secondary">キャンセル</button>
+          </div>
+        </div>
+
+        <div id="works-list" style="margin-top:20px;"></div>
+      </div>
+
+      <!-- チーム紹介管理 -->
+      <div id="about-panel" class="panel">
+        <div style="display:flex; justify-content:space-between; margin-bottom:20px; align-items:center; flex-wrap:wrap; gap:10px;">
+          <h3 style="margin:0;">チーム紹介 (沿革・受賞歴)</h3>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button style="width:auto; margin:0;" onclick="editAboutItem(null, 'history')">+ 沿革を追加</button>
+            <button style="width:auto; margin:0;" onclick="editAboutItem(null, 'awards')">+ 受賞歴を追加</button>
+          </div>
+        </div>
+
+        <div id="about-editor" class="editor-panel" style="display:none;">
+          <div id="about-editor-status" class="editor-status"></div>
+          <h3 id="about-editor-title" style="margin-top:0;">沿革・受賞歴を編集</h3>
+          <input type="hidden" id="about-item-type">
+          <input type="hidden" id="about-item-index">
+          <div class="form-group"><label>年</label><input type="text" id="about-year" placeholder="例: 2003年"></div>
+          <div class="form-group"><label>内容</label><textarea id="about-text" placeholder="出来事または賞の名前" style="min-height:80px;"></textarea></div>
+          <div style="display:flex; gap:10px; margin-top:14px;">
+            <button onclick="saveAboutItem()">保存する</button>
+            <button onclick="closeEditor('about')" class="btn-secondary">キャンセル</button>
+          </div>
+        </div>
+
+        <h4 style="margin-top:20px; border-bottom:2px solid var(--accent); padding-bottom:5px; display:inline-block;">光一天の歴史 (沿革)</h4>
+        <div id="about-history-list" style="margin-top:10px;"></div>
+
+        <h4 style="margin-top:20px; border-bottom:2px solid var(--accent); padding-bottom:5px; display:inline-block;">過去の受賞歴</h4>
+        <div id="about-awards-list" style="margin-top:10px;"></div>
+      </div>
+
+      <!-- 表示管理（10周年・協賛ページの公開と本文） -->
+      <div id="visibility-panel" class="panel">
+        <h3 style="margin-top:0;">表示管理</h3>
+        <p style="margin:8px 0 20px; color:#555; font-size:0.95rem; max-width:720px; line-height:1.6;">
+          サイト上でリンクやページとして出すかどうかをまとめて設定します。各ブロックごとに保存してください。
+        </p>
+
+        <section style="margin-bottom:36px; padding-bottom:28px; border-bottom:1px solid #e5e5ea;">
+          <h4 style="margin:0 0 12px; border-bottom:2px solid var(--accent); padding-bottom:6px; display:inline-block;">10周年記念公演ページ</h4>
+          <p style="margin:0 0 14px; color:#666; font-size:0.92rem;">公開にするとナビに「10周年記念公演」が表示され、ページにアクセスできるようになります。</p>
+          <div class="editor-panel" style="display:block;">
+            <div class="form-group">
+              <label style="display:flex; align-items:center; gap:8px;">
+                <input type="checkbox" id="vis-anniv-published" style="width:auto; margin:0;">
+                10周年記念ページを公開する
+              </label>
+            </div>
+            <div class="form-group">
+              <label>本文（トップのガラスカード内・改行可）</label>
+              <textarea id="vis-anniv-content" placeholder="10周年記念ページに表示する本文" style="min-height:160px;"></textarea>
+            </div>
+            <button type="button" onclick="saveVisibilityAnniv()">10周年記念を保存</button>
+          </div>
+        </section>
+
+        <section>
+          <h4 style="margin:0 0 12px; border-bottom:2px solid var(--accent); padding-bottom:6px; display:inline-block;">協賛ページ</h4>
+          <p style="margin:0 0 14px; color:#666; font-size:0.92rem;">協賛企業・団体を登録し、公開するとナビに「協賛」が表示され、sponsors.html で一覧できます。</p>
+          <div class="editor-panel" style="display:block;">
+            <div class="form-group">
+              <label style="display:flex; align-items:center; gap:8px;">
+                <input type="checkbox" id="vis-sponsors-published" style="width:auto; margin:0;">
+                協賛ページを公開する
+              </label>
+            </div>
+            <div class="form-group">
+              <label>ページ上部の説明文（任意・改行可）</label>
+              <textarea id="vis-sponsors-intro" placeholder="協賛への御礼や説明など" style="min-height:80px;"></textarea>
+            </div>
+            <p style="margin:0 0 10px; font-size:0.88rem; color:#555;">協賛一覧（企業名は必須。URL・ロゴ画像URLは任意。ロゴは固定画像管理などでアップロードしたURLを貼ってください）</p>
+            <div id="vis-sponsors-items" style="display:flex; flex-direction:column; gap:14px; margin-bottom:14px;"></div>
+            <button type="button" class="btn-secondary" style="width:auto; margin-bottom:16px;" onclick="addVisibilitySponsorRow()">＋ 協賛を追加</button>
+            <div><button type="button" onclick="saveVisibilitySponsors()">協賛ページを保存</button></div>
+          </div>
+        </section>
+      </div>
+
+      <!-- ゴミ箱管理 -->
+      <div id="trash-panel" class="panel">
+        <div style="display:flex; justify-content:space-between; margin-bottom:20px; align-items:center; flex-wrap:wrap; gap:10px;">
+          <h3 style="margin:0;">ゴミ箱</h3>
+          <button style="width:auto; margin:0;" onclick="loadTrash()">再読み込み</button>
+        </div>
+        <div id="trash-list"></div>
+        <p style="margin-top:15px; color:#555; font-size:0.95rem;">※ ゴミ箱に移動した項目は復元できます。完全に消したい場合は「完全削除」を押してください。</p>
+      </div>
+
+      <!-- 固定画像管理 -->
+      <div id="media-panel" class="panel">
+        <h3>画像管理</h3>
+        <p style="font-size:0.95rem; color:#333; margin-bottom: 16px;">
+          アップロードされたすべての画像を管理します。<br>
+          <span style="color:#666; font-size:0.9rem;">※ 複数ファイルの一括アップロードには対応していません。ファイルは1つずつアップロードをお願いします。</span>
+        </p>
+
+        <h4 style="margin-top:20px; border-bottom:2px solid var(--accent); padding-bottom:5px; display:inline-block;">固定画像設定</h4>
+        <p style="margin:10px 0 0; color:#555; font-size:0.9rem; max-width:720px; line-height:1.55;">
+          ロゴ・ヒーロー背景は削除できます。差し替えでアップロードすると、同じ種類の古いファイル（別拡張子の残骸など）は自動で削除されます。
+        </p>
+        <div id="fixed-assets" style="margin-top:15px;"></div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-top:30px;">
+          <h4 style="margin:0; border-bottom:2px solid var(--accent); padding-bottom:5px; display:inline-block;">その他の画像ファイル</h4>
+          <input type="hidden" id="view-folder" value="assets">
+        </div>
+        <div id="media-list" style="margin-top:15px;"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="shared/work-detail-sections.js"></script>
+  <script src="admin/core.js"></script>
+  <script src="admin/content-editors.js"></script>
+  <script src="admin/media-trash.js"></script>
+</body>
+</html>

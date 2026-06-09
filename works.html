@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>作品一覧 | 光一天</title>
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared/site-nav.css">
+  <style>
+    :root {
+      --primary: #facc15; --primary-hover: #eab308; --anniv-color: #ef4444;
+      --bg-main: #f5f5f7; --bg-surface: #ffffff;
+      --text-main: #1d1d1f; --text-sub: #86868b;
+      --line: #e5e5ea; --shadow: 0 10px 40px rgba(0,0,0,0.06);
+      --nav-height: 64px; --font-serif: 'Shippori Mincho', serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Noto Sans JP', sans-serif; background-color: var(--bg-main); color: var(--text-main); line-height: 1.6; padding-top: var(--nav-height); }
+    h1, h2, h3, .serif { font-family: var(--font-serif); }
+
+    .page-header { padding: 3rem 4% 1.5rem; text-align: center; }
+    .page-title { font-size: clamp(2.4rem, 8vw, 3.8rem); font-weight: 800; margin-bottom: 1rem; color: var(--text-main); }
+
+    .works-section { padding: 1.5rem 4% 4rem; max-width: 1000px; margin: 0 auto; }
+    .work-card { 
+      display: block; text-decoration: none; color: inherit;
+      background: var(--bg-surface); border-radius: 28px; padding: 1.8rem; 
+      margin-bottom: 2rem; box-shadow: var(--shadow); border: 1px solid rgba(0,0,0,0.02);
+      transition: 0.3s;
+    }
+    .work-card:hover { transform: translateY(-5px); box-shadow: 0 15px 50px rgba(0,0,0,0.08); }
+    
+    .work-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1rem; border-bottom: 2px solid var(--primary); padding-bottom: 0.4rem; }
+    .work-header-left { display: flex; align-items: baseline; gap: 1rem; }
+    .work-year { font-weight: 800; font-size: 1.1rem; color: var(--text-sub); }
+    .work-title { font-size: 1.7rem; font-weight: 800; color: var(--text-main); overflow-wrap: anywhere; }
+    .work-more { font-size: 0.9rem; font-weight: bold; color: var(--primary-hover); }
+
+    .work-content { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+    .work-story { font-size: 0.95rem; color: #444; line-height: 1.8; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .work-awards { background: #fffcf0; padding: 1.2rem; border-radius: 16px; border-left: 4px solid var(--primary); }
+    .award-item { font-size: 0.9rem; font-weight: 700; color: #b42318; display: block; margin-bottom: 4px; }
+
+    .fade-up { opacity: 0; transform: translateY(20px); transition: 0.6s ease-out; }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 860px) {
+      .work-card { padding: 1.5rem; }
+      .work-header { flex-direction: column; gap: 0.5rem; align-items: flex-start; }
+      .works-section { padding: 1rem 5% 2.5rem; }
+      .work-title { font-size: 1.36rem; }
+      .work-awards { padding: 0.9rem; border-radius: 12px; }
+      .award-item { font-size: 0.86rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="site-nav">
+    <a href="index.html" class="nav-logo-container">
+      <div id="logo-area"></div>
+      <span class="nav-logo-text">光一天</span>
+    </a>
+    <div class="nav-links" id="nav-menu">
+      <a href="index.html">Home</a>
+      <a href="about.html">チーム紹介</a>
+      <a href="works.html" class="active">作品一覧</a>
+      <a href="news.html">お知らせ</a>
+      <a href="contact.html">連絡先</a>
+      <a href="10th-anniv.html" class="nav-anniv-btn">10周年記念公演</a>
+      <a href="sponsors.html" class="nav-sponsors-btn">協賛</a>
+    </div>
+    <div class="hamburger" onclick="toggleMenu()" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <header class="page-header">
+    <h1 class="page-title serif fade-up">作品一覧</h1>
+    <p class="fade-up" style="color:var(--text-sub); font-weight:500;">光一転が紡いできた、物語と情熱の軌跡。</p>
+  </header>
+
+  <section class="works-section" id="works-container"></section>
+
+  <footer style="text-align:center; padding:4rem; color:var(--text-sub); border-top:1px solid var(--line); background:white;">
+    <p>&copy; 2026 公立千歳科学技術大学 光一天.</p>
+  </footer>
+
+  <script src="shared/site-shell.js"></script>
+  <script>
+    // デフォルトデータ
+    const defaultWorks = [
+      {
+        id: "w2025", year: "2025", title: "一鳳（かげは）",
+        story: "混沌の世界に鳳凰が誕生する。鳳凰は、みるみる力をつけ国を生み出す。鳳凰は自身の力を存分に発揮し、国を治め、人々に安寧をもたらした。しかし、鳳凰がが天命を全うし、鳳凰の影に隠れていた邪知暴虐の王が圧政を敷き始める。鳳凰の創った国が混乱に包まれ、人々は鳳凰の再来を願い、天に祈りを捧げた。民の祈りを受け、鳳凰が再びこの地に姿を見せる。こうして国に平和が戻った。",
+        awards: []
+      },
+      {
+        id: "w2024", year: "2024", title: "臨剋（りんこく）",
+        story: "テーマ～酒呑童子討伐～ 平和だった京で娘が攫われる。これは丹波国大江山に棲む『酒呑童子」の仕業であることがわかった。 少数精鋭で結成された討伐隊は酒呑童子討伐に向かう道中、神の化身(菩薩)に神便鬼毒酒という鬼の神通力を無くす酒を授かる。 討伐隊は山伏として山に忍び込み、酒呑童子の屋敷に到着する。酒呑童子は歓迎して宴を開くが、料理に出されたものは人肉や血酒であった。討伐隊がこれら嫌がらなかったことから心を許した酒呑童子は、討伐隊から受け取った毒酒を飲み酔い潰れる。 討伐隊は寝込みを襲い、酒呑童子も対抗しようとしたものの毒酒により力を無くしていたため首をはねられてしまった。 こうして京には平和が戻った。",
+        awards: [
+          "第33回YOSAKOIソーラン祭り U-40 優秀賞"
+        ]
+      },
+      {
+        id: "w2023", year: "2023", title: "紲伊（せつか）",
+        story: "テーマ～国産み～ 華原中国海月の如く漂いて 未だ国として成り立たず閉じる 何も無い海が広がっている葦原中国(あしはらのなかつくに)イザナギ・イザナミが天沼矛(あまのぬぼこ)で海をかき混ぜ淤能碁呂嶋(おのごろじま)をつくり、そこに降臨する 葦原中国に島を作るためイザナギ・イザナミは結婚するが、プロポーズがイザナミ(女性)からだったためできた子供(島)は不安定で消えてしまう 2回目の結婚はイザナミ(男性)から猛烈アプローチをしてプロポーズ これ以降にできた子供(島)は安定していた 葦原中国には多くの島ができ、人や村が産まれたことで豊かに繁栄して行く",
+        awards: []
+      },
+      {
+        id: "w2022", year: "2022", title: "啓天（ひぞら）",
+        story: "啓 ひらくという意味があり、闇をきりひらき明るくなっていく（コロナが収まり、明るい未来に向けて頑張っていく）。 陽の気が開いていく季節、立春のことでこの作品は春で始まって春で終わる。 天 光一天や天女、自然や空といった意味がある。",
+        awards: [
+          "第25回みちのくYOSAKOIまつり ファイナル 第3位 仙台市長賞"
+        ]
+      },
+      {
+        id: "w2021", year: "2021", title: "光櫛（れいき）",
+        story: "テーマ*八雲の姫。2017年作品「灼耀」のスサノオのその後を描く、ヤマタノオロチ退治とクシナダヒメとの結婚までの物語。",
+        awards: []
+      },
+      {
+        id: "w2020", year: "2020", title: "燦華（さんか）",
+        story: "物静かな秋の大地に蕾があり、季節外れの薄桃色の花を咲かせ人々を魅了する。冬の吹雪を越え、春には満開の桜が心に眠る記憶を呼び覚まし、宴の始まりへと導く生命の物語。",
+        awards: []
+      },
+      {
+        id: "w2019", year: "2019", title: "黎明（しののめ）",
+        story: "暗闇から始まりうっすらと陽の光が見え出す。 そしてだんだんと明るくなっていく中で雲が光を遮り夜明けを邪魔してくる。 光が雲を押しのけようとするが押し戻されてしまう。 だが、それを押しのけようと再び奮闘する。 そうすると雲がだんだんと無くなっていき日が昇り夜明けがくる。",
+        awards: [
+          "第21回ちとせトーナメント セミトーナメント ベスト6"
+        ]
+      },
+      {
+        id: "w2018", year: "2018", title: "嵐奏（らんか）",
+        story: "人間が怖れを抱くほどの偉大な力を見せる天然現象のうち、最も身近に起こり最も代表的な強風と雷鳴をそれぞれ神格化したもの。元来、別個に早くから尊崇され、中国では漢代の画像石に表される。日本でも級長津彦（しなつひこ）命と級長津比売（しなつひめ）命の男女の風神をまつる神社、霹靂（なるとき）神、鳴雷（なるいかずち）神、別雷（わけいかずち）神など、雷神をまつる神社が各地に見られる。",
+        awards: [
+          "第20回ちとせトーナメント ベスト16",
+          "第21回みちのくYOSAKOIまつり ファイナル 第4位"
+        ]
+      },
+      {
+        id: "w2017", year: "2017", title: "灼耀（あすか）",
+        story: "テーマ：日本神話 〜アマテラス神話　天岩屋戸〜 光一天独立一年目の作品。 新しいチームとして再出発を切ること、光一天という名で日が昇ることをイメージし、太陽神であるアマテラスをテーマにした。\n\n灼：あきらか。明るいさま。きらきらとかがやくさま。\n\n耀：かがやく、かがやかす。 飛ぶ鳥の明日香。飛鳥が飛んでくる土地は豊かに実る。",
+        awards: [
+          "第26回YOSAKOIソーラン祭り 敢闘賞",
+          "第19回ちとせトーナメント ベスト8 レラ賞",
+          "第20回みちのくYOSAKOIまつり ファイナル 第3位 仙台市長賞"
+        ]
+      },
+      {
+        id: "w2016", year: "2016", title: "神瑞（かずい）",
+        story: "カムイのもたらしためでたい兆し。水（みず）を表す瑞（みず）で神瑞（かずい）。同音異義語の花の雄しべと雌しべの総称「花蕊（かずい）」も込められている。石狩川の源流を歌っている、石狩川流節を使って山河を作り上げた神々の姿を演じる作品であり、象徴的なシーンで花の芽吹きをイメージさせる2部からこのタイトルとなりました。皆様の心にも大輪の華が咲きますように。",
+        awards: [
+          "第25回YOSAKOIソーラン祭り セミファイナル進出",
+          "第26回石狩川フェスティバル水祭 準グランプリ",
+          "第19回みちのくYOSAKOIまつり ファイナル 第4位"
+        ]
+      },
+      {
+        id: "w2015", year: "2015", title: "嵩音（かさね）",
+        story: "語源は「重ね合わせる」の重ねからきていて、 『嵩』は崇高な～、高くそびえるの意味、 鳴子の音色やよさこい節、ドラムやバチ等、『音』に拘った作品である為 「嵩」と「音」を併せて『嵩音』としました。 嵩音というテーマは『最も高い所に届く音』…これまで「遨～すさび～＆光一天」が積み重ねたものを発揮し、YOSAKOIソーランの頂点の『大賞』のステージにこの音を響かせるという覚悟を示しています。",
+        awards: [
+          "第24回YOSAKOIソーラン祭り セミファイナル 第3位",
+          "第25回石狩川フェスティバル水祭 王座",
+          "第17回ちとせトーナメント ベスト16",
+          "第18回みちのくYOSAKOIまつり ファイナル進出 『第7位』"
+        ]
+      },
+      {
+        id: "w2014", year: "2014", title: "神煒（しんき）",
+        story: "アイヌ民族に伝わる世界創成の伝承の一つ、チキサニカムイの伝説を、YOSAKOIソーランの作品としてオリジナルアレンジを加え創作しました。 地上世界を造ったカムイの1人コタンコロカムイ（フクロウの神）がこのお話の語り手です。 コロカムイ達が見張の為に造った樹に宿りし、絶世の美女神チキサニ姫、その美しさは、瞬く間に天上界でも噂になり、一度見てみたいと誰もが思いましたが、創造神は出来たばかりの地上世界への干渉を許しませんでした。 しかし、その言いつけを振り切り、地上世界へチキサニ姫を見に言ってしまった神がおりました。 創造神の弟にあたる強大な力を持つ荒神カンナカムイ（雷神）です。",
+        awards: [
+          "第23回YOSAKOIソーラン祭り セミファイナル 第3位",
+          "第24回石狩川フェスティバル水祭 王座",
+          "第16回ちとせトーナメント ベスト8",
+          "第16回上川中央支部大会 準大賞"
+        ]
+      },
+      {
+        id: "w2013", year: "2013", title: "ラマッタ・クリムセ",
+        story: "遨～すさび～＆光一天で唯一アイヌ語のテーマ 意味は「魂を呼ぶ踊り」 この作品をきっかけに 遨～すさび～＆光一天がアイヌ時代に突入します！という予告をすると共に ２０１４年からのアイヌ神話三部作のプロローグとなる作品です！",
+        awards: [
+          "第22回YOSAKOIソーラン祭り 一次審査員賞",
+          "第15回ちとせトーナメント 優勝",
+          "第15回上川中央支部大会 大賞"
+        ]
+      },
+      {
+        id: "w2012", year: "2012", title: "晶華（しょうか）",
+        story: "",
+        awards: [
+          "第21回YOSAKOIソーラン祭り セミファイナル 第4位",
+          "第14回ちとせトーナメント 優勝",
+          "第14回上川中央支部大会 大賞"
+        ]
+      },
+      {
+        id: "w2011", year: "2011", title: "花神風（かしんふう）",
+        story: "",
+        awards: [
+          "第20回YOSAKOIソーラン祭り 一次審査員賞",
+          "第13回上川中央支部大会 大賞"
+        ]
+      },
+      {
+        id: "w2010k", year: "2010", title: "光芒一閃（こうぼういっせん）",
+        story: "「光芒」はきらめく光の穂先、「一閃」は瞬時のきらめき。合同チーム解散後、光一天単体で演舞できる作品がなく学生チャレンジプログラムで企画された、初の単体作品。",
+        awards: []
+      },
+      {
+        id: "w2010", year: "2010", title: "依処（よすが）",
+        story: "",
+        awards: [
+          "第19回YOSAKOIソーラン祭り 一次審査員賞"
+        ]
+      },
+      {
+        id: "w2009", year: "2009", title: "紬（つむぎ）",
+        story: "",
+        awards: [
+          "第18回YOSAKOIソーラン祭り セミファイナル進出 第9位"
+        ]
+      },
+      {
+        id: "w2008", year: "2008", title: "紲（きずな）",
+        story: "",
+        awards: [
+          "第17回YOSAKOIソーラン祭り 新人賞",
+          "第17回YOSAKOIソーラン祭り 敢闘賞"
+        ]
+      },
+      {
+        id: "w2007", year: "2007", title: "桜の刻（さくらのとき）",
+        story: "夕張の木、桜 一度夢を失った者達が、山間の夕張の丘でいつか果たしたいと誓った約束を唄った曲です。 本祭に出る術を失った自分達と破綻した夕張市の姿を重ね、手を取り合うことで、今は叶わぬ夢をいつか叶える希望を持つ姿を表現しました。",
+        awards: []
+      }
+    ];
+
+    async function init() {
+      await loadSharedLogo();
+
+      let worksData = [];
+      try {
+        const res = await fetch('/api/content?type=works', { cache: 'no-cache' });
+        const text = await res.text();
+        worksData = JSON.parse(text);
+      } catch(e) {
+        worksData = [];
+      }
+
+      // データが空ならデフォルトを使用
+      if(!Array.isArray(worksData) || worksData.length === 0) {
+          worksData = defaultWorks;
+      }
+
+      const container = document.getElementById('works-container');
+      container.innerHTML = worksData.map(work => `
+      <a href="work-detail.html?id=${encodeURIComponent(work.id)}" class="work-card fade-up">
+          <div class="work-header">
+            <div class="work-header-left">
+              <span class="work-year">${work.year}</span>
+              <h2 class="work-title serif">${work.title}</h2>
+            </div>
+            <span class="work-more">詳細を見る →</span>
+          </div>
+          <div class="work-content">
+          ${work.story ? `<p class="work-story">${work.story}</p>` : ''}
+          ${work.awards && work.awards.length > 0 && work.awards[0] !== "" ? `
+              <div class="work-awards">
+              ${work.awards.map(a => `<span class="award-item">🏆 ${a}</span>`).join('')}
+              </div>
+          ` : ''}
+          </div>
+      </a>
+      `).join('');
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => { if(entry.isIntersecting) entry.target.classList.add('visible'); });
+      }, { threshold: 0.1 });
+      document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+    }
+
+    init();
+  </script>
+  <script src="anniv-visibility.js"></script>
+</body>
+</html>

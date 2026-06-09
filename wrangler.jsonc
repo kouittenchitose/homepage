@@ -1,0 +1,19 @@
+{
+  "name": "testkouitten",
+  "compatibility_date": "2026-05-12",
+  "main": "functions/index.js",
+  "assets": {
+    "directory": "./",
+    "binding": "ASSETS"
+  },
+  "r2_buckets": [
+    {
+      "binding": "MEDIA_BUCKET",
+      "bucket_name": "testkouitten-media"
+    }
+  ],
+  "vars": {
+    "ADMIN_USER": "admin",
+    "ADMIN_PASSWORD": "password"
+  }
+}

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>10周年記念公演 | 光一天</title>
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;800&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="shared/site-nav.css">
+    <style>
+        :root {
+            --primary: #facc15;
+            --primary-hover: #eab308;
+            --anniv-color: #ef4444;
+            --bg-dark: #050505;
+            --bg-surface: rgba(5, 5, 5, 0.98);
+            --surface: rgba(30, 30, 30, 0.7);
+            --text-main: #f8fafc;
+            --text-sub: #a1a1aa;
+            --nav-height: 64px;
+            --font-serif: 'Shippori Mincho', serif;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Noto Sans JP', sans-serif; background-color: var(--bg-dark); color: var(--text-main); overflow-x: hidden; line-height: 1.6; }
+        h1, h2, h3, h4, .serif { font-family: var(--font-serif); }
+
+        .bg-fx { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; background: radial-gradient(circle at center, #111 0%, #050505 100%); }
+
+        .work-hero { padding: 10rem 5% 2rem; text-align: center; }
+        .work-hero-title { font-size: clamp(2.5rem, 8vw, 5rem); margin-bottom: 0.5rem; color: var(--anniv-color); text-shadow: 0 0 20px rgba(239, 68, 68, 0.5); }
+        
+        section { padding: 1.5rem 4% 4rem; max-width: 900px; margin: 0 auto; }
+        .glass-card { background: var(--surface); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 1.8rem; text-align: center; font-size: 1.05rem; line-height: 1.8; margin-bottom: 2rem; overflow-wrap: anywhere; }
+
+        .anniv-details { background: rgba(127, 29, 29, 0.2); border: 1px solid var(--anniv-color); border-radius: 16px; padding: 1.5rem; text-align: left; }
+        .detail-row { display: flex; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 1.5rem 0; }
+        .detail-row:last-child { border-bottom: none; }
+        .detail-label { width: 120px; color: var(--anniv-color); font-weight: bold; font-size: 1.1rem; }
+        .detail-value { flex: 1; font-size: 1rem; }
+
+        .back-btn-container { text-align: center; margin-top: 4rem; }
+        .back-btn { display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: var(--text-main); padding: 0.8rem 2rem; border-radius: 50px; text-decoration: none; transition: 0.3s; }
+        .back-btn:hover { background: rgba(255,255,255,0.2); transform: translateX(-5px); }
+
+        footer { text-align: center; padding: 3rem 5%; background: #000; color: var(--text-sub); margin-top: 4rem; border-top: 1px solid rgba(255,255,255,0.05); }
+
+        .fade-up { opacity: 0; transform: translateY(30px); transition: 0.8s ease; }
+        .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+        @media (max-width: 768px) {
+            .detail-row { flex-direction: column; gap: 0.5rem; }
+            section { padding: 1rem 5% 3rem; }
+            .glass-card { padding: 1.2rem; font-size: 0.98rem; }
+            .anniv-details { padding: 1rem; }
+            .detail-value { font-size: 0.96rem; }
+        }
+    </style>
+</head>
+<body data-anniv-page="true" data-nav-theme="dark">
+
+    <nav class="site-nav">
+        <a href="index.html" class="nav-logo-container">
+            <div id="logo-area"></div>
+            <span class="nav-logo-text">光一天</span>
+        </a>
+        <div class="nav-links" id="nav-menu">
+            <a href="index.html">Home</a>
+            <a href="about.html">チーム紹介</a>
+            <a href="works.html">作品一覧</a>
+            <a href="news.html">お知らせ</a>
+            <a href="contact.html">連絡先</a>
+            <a href="10th-anniv.html" class="nav-anniv-btn">10周年記念公演</a>
+            <a href="sponsors.html" class="nav-sponsors-btn">協賛</a>
+        </div>
+        <div class="hamburger" onclick="toggleMenu()" id="hamburger">
+            <span></span><span></span><span></span>
+        </div>
+    </nav>
+
+    <div class="bg-fx"></div>
+
+    <header class="work-hero fade-up">
+        <h1 class="work-hero-title serif">10周年記念公演</h1>
+        <p class="serif" style="font-size: clamp(1.2rem, 4vw, 1.8rem); letter-spacing: 0.1em; margin-top:1rem;">ー 軌跡と、その先へ ー</p>
+    </header>
+
+    <section>
+        <div class="glass-card fade-up">
+            <p id="anniv-dynamic-content">公立千歳科学技術大学 YOSAKOIソーラン部「光一天」は、<br>
+            皆様の温かいご支援により創設から10年を迎えました。<br><br>
+            歴代の演舞が織りなす特別なステージ。<br>
+            現役生とOB・OGが集結し、これまでの感謝を込めて踊ります。</p>
+        </div>
+
+        <div class="anniv-details fade-up">
+            <div class="detail-row">
+                <div class="detail-label">開催日</div>
+                <div class="detail-value">2026年 〇月 〇日 (日) <br><span style="font-size: 0.85rem; color: var(--text-sub);">開場 13:00 / 開演 13:30</span></div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">会場</div>
+                <div class="detail-value">千歳市民文化センター (北ガス文化ホール) 大ホール<br><span style="font-size: 0.85rem; color: var(--text-sub);">※入場無料・全席自由</span></div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">演目予定</div>
+                <div class="detail-value" style="font-size: 0.95rem; line-height: 1.8;">
+                    ・第10代 新作演舞 お披露目<br>
+                    ・歴代演舞メドレー<br>
+                    ・OB・OG合同演舞 ほか
+                </div>
+            </div>
+        </div>
+
+        <div class="back-btn-container fade-up">
+            <a href="index.html" class="back-btn">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                トップページに戻る
+            </a>
+        </div>
+    </section>
+
+    <footer>
+        <p class="serif" style="font-size: 0.8rem; color: #666;">&copy; 2026 公立千歳科学技術大学 光一天</p>
+    </footer>
+
+    <script src="shared/site-shell.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSharedLogo();
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.fade-up').forEach((el) => observer.observe(el));
+        });
+    </script>
+  <script src="anniv-visibility.js"></script>
+</body>
+</html>

@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=overlays-content">
+  <title>光一天 | 公立千歳科学技術大学 YOSAKOIソーラン部</title>
+  <meta name="description" content="公立千歳科学技術大学 YOSAKOIソーラン部「光一天」の公式サイト。チーム紹介、作品・お知らせ、連絡先のご案内。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@800&family=Noto+Sans+JP:wght@400;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared/site-nav.css">
+  <style>
+    :root {
+      --primary: #facc15; --primary-hover: #eab308; --anniv-color: #ef4444;
+      --bg-main: #f5f5f7; --bg-surface: #ffffff;
+      --text-main: #1d1d1f; --text-sub: #55555a;
+      --line: #e5e5ea; --shadow: 0 10px 40px rgba(0,0,0,0.06);
+      --nav-height: 64px; --ease-apple: cubic-bezier(0.28, 0.11, 0.32, 1);
+      --font-serif: 'Shippori Mincho', serif; --font-sans: 'Noto Sans JP', sans-serif;
+      /* Safari 下部ツールバー開閉で 100dvh が伸縮し本文が跳ねる → 安定した small viewport height */
+      --hero-min-height: 100vh;
+      --hero-min-height: 100svh;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    /* iOS: オーバースクロールで fixed 背景がずれて見えるのを抑える + ページ下地を html/body で統一 */
+    html {
+      scroll-behavior: smooth;
+      background-color: var(--bg-main);
+      scroll-padding-top: calc(var(--nav-height) + 12px);
+      overscroll-behavior: none;
+      overscroll-behavior-y: none;
+    }
+    body {
+      background-color: var(--bg-main);
+      overscroll-behavior: none;
+      overscroll-behavior-y: none;
+      /* iOS: ダブルタップ拡大抑止でタッチ時のレイアウトの揺れを多少抑える */
+      touch-action: manipulation;
+    }
+
+    /* アクセシビリティ・一般的なコーポレサイト慣例 */
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      z-index: 10000;
+      padding: 0.75rem 1.25rem;
+      background: var(--text-main);
+      color: #fff;
+      font-weight: 700;
+      border-radius: 0 0 8px 0;
+      text-decoration: none;
+    }
+    .skip-link:focus {
+      left: 0;
+      top: 0;
+      outline: 2px solid var(--primary-hover);
+      outline-offset: 2px;
+    }
+
+    main { position: relative; z-index: 1; }
+
+    .site-header {
+      position: relative;
+      z-index: 1000;
+    }
+
+    .hero h1 { margin: 0; }
+
+    .hero {
+      position: relative;
+      box-sizing: border-box;
+      min-height: var(--hero-min-height);
+      width: 100%;
+      padding-top: calc(var(--nav-height) + 32px);
+      padding-bottom: clamp(3rem, 10vh, 5.5rem);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    /* 外側ラッパー: fixed。iOS は visualViewport とレイアウトがずれるので JS で translateY 補正 */
+    .hero-bg-wrap {
+      position: fixed;
+      left: 0;
+      right: 0;
+      top: -120px;
+      bottom: -120px;
+      width: 100%;
+      min-height: calc(100vh + 240px);
+      min-height: calc(100svh + 240px);
+      z-index: 0;
+      pointer-events: none;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+    }
+    /* タッチ端末はラバーバンド振幅が大きいので背景を大きくオーバーさせる */
+    @media (pointer: coarse) {
+      .hero-bg-wrap {
+        top: -55vh;
+        bottom: -55vh;
+        min-height: 210vh;
+      }
+    }
+    .hero-bg-overlay {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      min-height: 100%;
+      z-index: 0;
+      background-size: 100% 100%, auto clamp(600px, 90vh, 850px);
+      background-position: center, center 40%;
+      background-repeat: no-repeat, no-repeat;
+      opacity: 0;
+      transform: translateZ(0) scale(1.03);
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      pointer-events: none;
+    }
+    .hero-bg-overlay.bg-visible { animation: hero-bg-fade 9s ease-in-out forwards; }
+
+    .hero-scroll-hint {
+      position: absolute;
+      right: clamp(1rem, 4vw, 2.5rem);
+      bottom: clamp(0.65rem, 2.5vh, 1.75rem);
+      left: auto;
+      transform: none;
+      z-index: 3;
+      opacity: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      text-decoration: none;
+      color: var(--text-sub);
+      transition: color 0.2s;
+      pointer-events: none;
+    }
+    .hero-scroll-hint:focus-visible {
+      outline: 2px solid var(--primary-hover);
+      outline-offset: 4px;
+      border-radius: 8px;
+      pointer-events: auto;
+    }
+    .hero-ready .hero-scroll-hint {
+      animation: hero-scroll-hint-fade 2.4s ease-out forwards;
+      pointer-events: auto;
+    }
+    .hero-ready .hero-scroll-hint:focus-visible,
+    .hero-ready .hero-scroll-hint:hover { color: var(--text-main); }
+    .hero-scroll-hint-visual {
+      display: flex;
+      justify-content: flex-end;
+      filter: drop-shadow(0 0 12px rgba(255,255,255,0.95));
+    }
+    .hero-ready .hero-scroll-hint-visual {
+      animation: hero-scroll-hint-bounce 1.45s var(--ease-apple) infinite;
+    }
+    .hero-scroll-hint-svg {
+      width: clamp(22px, 5.5vw, 30px);
+      height: auto;
+      display: block;
+    }
+    @keyframes hero-scroll-hint-fade {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 0.82; transform: translateY(0); }
+    }
+    @keyframes hero-scroll-hint-bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(9px); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-ready .hero-scroll-hint-visual { animation: none; }
+    }
+    .hero-content { position: relative; z-index: 2; margin-top: 0; max-width: min(920px, 100%); margin-inline: auto; padding-inline: clamp(16px, 4vw, 28px); }
+
+    .hero-subtitle, .hero-title, .hero-desc {
+      text-shadow: 0 0 28px rgba(255,255,255,0.98), 0 2px 20px rgba(255,255,255,0.75);
+    }
+    .hero-subtitle {
+      font-size: clamp(0.88rem, 2.4vw, 1.05rem); font-weight: 800; color: var(--text-sub);
+      letter-spacing: 0.22em; line-height: 1.75; margin-bottom: clamp(1.35rem, 4vw, 2rem);
+    }
+    .hero-title {
+      font-family: var(--font-serif); font-size: clamp(3.5rem, 14vw, 10rem); font-weight: 800;
+      line-height: 1.02; margin-bottom: clamp(1.6rem, 4.5vw, 2.75rem); letter-spacing: 0.02em;
+    }
+    .hero-desc {
+      font-size: clamp(1.05rem, 3vw, 1.42rem); max-width: 34em; margin: 0 auto; font-weight: 800;
+      line-height: 1.82; letter-spacing: 0.07em;
+    }
+
+    .quick-links-strip {
+      position: relative; z-index: 10;
+      margin-top: clamp(3.75rem, 7.5vw, 6.25rem);
+      padding: 1.35rem clamp(16px, 5%, 48px) 1.5rem;
+      display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
+      gap: 0.65rem 1rem;
+      background: transparent;
+      border-top: 1px solid rgba(255, 255, 255, 0.35);
+    }
+    .quick-links-strip a {
+      font-size: 0.82rem; font-weight: 800; color: var(--text-main); text-decoration: none;
+      padding: 0.55rem 1.15rem; border-radius: 999px; background: var(--bg-surface);
+      border: 1px solid rgba(0,0,0,0.06); box-shadow: 0 4px 18px rgba(0,0,0,0.05);
+      transition: transform 0.2s var(--ease-apple), border-color 0.2s;
+    }
+    .quick-links-strip a:hover { transform: translateY(-2px); border-color: rgba(234, 179, 8, 0.45); color: var(--primary-hover); }
+
+    section { position: relative; z-index: 10; padding: 90px 3%; max-width: 1200px; margin: 0 auto; background: transparent; }
+
+    .intro-card { padding: clamp(1.75rem, 4vw, 2.6rem) clamp(1.5rem, 4vw, 2.75rem); }
+    .intro-lead {
+      font-family: var(--font-serif); font-size: clamp(1.35rem, 3.5vw, 1.75rem); font-weight: 800;
+      line-height: 1.55; margin-bottom: 1.1rem; color: var(--text-main);
+    }
+    .intro-body { font-size: 1.02rem; line-height: 1.95; color: #3a3a3f; margin-bottom: 1.35rem; }
+    .intro-actions { display: flex; flex-wrap: wrap; gap: 0.85rem 1.25rem; align-items: center; margin-top: 0.25rem; }
+    .link-pill {
+      display: inline-flex; align-items: center; font-weight: 800; font-size: 0.92rem;
+      color: var(--text-main); text-decoration: none; padding: 0.62rem 1.15rem;
+      border-radius: 999px; background: #fffbeb;
+      border: 1px solid rgba(234, 179, 8, 0.45); transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .link-pill:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0,0,0,0.07); color: #5c4d00; }
+
+    .contact-home-stack { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem; width: 100%; }
+    .contact-home-h3 {
+      font-family: var(--font-serif); color: var(--text-main); font-size: 1.35rem; margin-bottom: 1.25rem;
+      border-bottom: 2px solid var(--primary); display: inline-block; padding-bottom: 4px;
+    }
+    .contact-note { font-size: 1.02rem; line-height: 1.85; color: #333; margin-bottom: 1.5rem; }
+    .contact-list { margin: 0; }
+    .contact-row { display: grid; grid-template-columns: minmax(120px, 140px) 1fr; gap: 1rem 1.25rem; padding: 1rem 0; border-bottom: 1px solid var(--line); align-items: start; }
+    .contact-row:last-child { border-bottom: none; }
+    .contact-row dt { font-weight: 700; color: var(--text-sub); font-size: 0.88rem; margin: 0; }
+    .contact-row dd { margin: 0; font-size: 1.02rem; overflow-wrap: anywhere; line-height: 1.65; }
+    .contact-link { color: var(--text-main); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+    .contact-link:hover { color: var(--primary-hover); }
+
+    .site-footer {
+      text-align: center; padding: 4rem; color: var(--text-sub);
+      border-top: 1px solid rgba(255, 255, 255, 0.35);
+      background: rgba(255, 255, 255, 0.48);
+      backdrop-filter: saturate(160%) blur(14px);
+      -webkit-backdrop-filter: saturate(160%) blur(14px);
+      position: relative;
+      z-index: 12;
+    }
+
+    .site-footer-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+    .footer-nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.75rem 1.25rem;
+      margin-bottom: 1.75rem;
+      padding-bottom: 1.75rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    }
+    .footer-nav a {
+      color: var(--text-sub);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+    .footer-nav a:hover { color: var(--text-main); }
+    .footer-copy {
+      margin: 0;
+      font-size: 0.88rem;
+    }
+
+    .section-title {
+      font-family: var(--font-serif); font-size: clamp(2.2rem, 6vw, 3.2rem); text-align: center; margin-bottom: 2rem;
+      text-shadow: 0 2px 28px rgba(255, 255, 255, 0.92), 0 1px 10px rgba(255, 255, 255, 0.85);
+    }
+    
+    .pinned-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+    .pinned-card {
+      background: var(--bg-surface);
+      border-radius: 24px; padding: 1.25rem;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      box-shadow: 0 10px 36px rgba(0, 0, 0, 0.07);
+      text-decoration: none; color: inherit; transition: 0.3s;
+    }
+    .pinned-card:hover { transform: translateY(-5px); }
+    .pinned-image { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 18px; margin-bottom: 1rem; background: #eee; }
+    .pinned-title { font-size: 1.3rem; font-weight: 800; margin-bottom: 0.5rem; }
+
+    .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .apple-card {
+      border-radius: 24px; padding: 2rem; min-width: 0;
+    }
+    .apple-card:not(.news-panel) {
+      background: var(--bg-surface);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      box-shadow: 0 8px 36px rgba(0, 0, 0, 0.06);
+    }
+    .apple-card.news-panel {
+      background: var(--bg-surface);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      box-shadow: var(--shadow);
+    }
+    .instagram-feature-card { align-items: stretch !important; text-align: center; }
+    .instagram-preview-card {
+      display: block; text-decoration: none; color: inherit;
+      border-radius: 18px; overflow: hidden;
+      border: 1px solid rgba(0, 0, 0, 0.08); box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s var(--ease-apple), box-shadow 0.2s;
+      margin-top: 1rem; background: var(--bg-surface); text-align: left;
+    }
+    .instagram-preview-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.12);
+    }
+    .instagram-preview-thumb {
+      aspect-ratio: 1;
+      background: linear-gradient(135deg, #f09433 0%, #e6683c 22%, #dc2743 45%, #cc2366 72%, #bc1888 100%);
+      position: relative; overflow: hidden;
+    }
+    .instagram-preview-img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      position: absolute; inset: 0;
+    }
+    .instagram-preview-placeholder {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      opacity: 0.95;
+    }
+    .instagram-preview-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 0.75rem; padding: 0.85rem 1rem; background: var(--bg-main);
+      border-top: 1px solid var(--line); font-size: 0.88rem;
+    }
+    .instagram-preview-handle { font-weight: 800; color: var(--text-main); font-family: var(--font-sans); }
+    .instagram-preview-label { font-weight: 700; color: var(--primary-hover); font-size: 0.82rem; flex-shrink: 0; }
+    .instagram-home-embed { width: 100%; margin-top: 1.25rem; min-height: 120px; display: flex; justify-content: center; align-items: flex-start; }
+    .instagram-home-embed .instagram-media { margin-left: auto !important; margin-right: auto !important; max-width: 540px !important; width: 100% !important; min-width: 0 !important; }
+    #news-content { min-width: 0; }
+    .news-item {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      text-decoration: none;
+      color: inherit;
+      padding: 1.1rem 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      min-width: 0;
+    }
+    .news-item:last-child { border-bottom: none; }
+    .news-item-thumb {
+      width: 84px;
+      height: 63px;
+      max-width: 84px;
+      object-fit: cover;
+      border-radius: 10px;
+      background: #eee;
+      flex-shrink: 0;
+    }
+    .news-item-content { flex: 1; min-width: 0; }
+
+    .fade-up { opacity: 0; transform: translateY(30px); transition: 0.8s var(--ease-apple); }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+    @keyframes hero-bg-fade { 0% { opacity: 0; transform: translateZ(0) scale(1.03); } 100% { opacity: 1; transform: translateZ(0) scale(1); } }
+
+    @media (max-width: 860px) {
+      .grid-container, .pinned-grid { grid-template-columns: 1fr; }
+      .hero { min-height: 88vh; min-height: 88svh; padding: calc(var(--nav-height) + 20px) 16px clamp(2.5rem, 9vh, 4rem); }
+      .hero-subtitle { letter-spacing: 0.14em; margin-bottom: 1rem; }
+      .hero-title { line-height: 1.08; margin-bottom: 1.3rem; }
+      .hero-desc { font-size: 1rem; line-height: 1.78; letter-spacing: 0.06em; }
+      .hero-scroll-hint { right: clamp(0.75rem, 4vw, 1.75rem); bottom: clamp(0.4rem, 2vh, 1.25rem); }
+      .quick-links-strip { margin-top: clamp(3rem, 7vw, 5rem); padding: 1.1rem 16px 1.25rem; gap: 0.5rem 0.65rem; }
+      .quick-links-strip a { font-size: 0.78rem; padding: 0.48rem 0.95rem; }
+      section { padding: 68px 5% 56px; }
+      .contact-row { grid-template-columns: 1fr; gap: 0.35rem; padding: 0.95rem 0; }
+      .apple-card { border-radius: 18px; padding: 1.2rem; }
+      .pinned-card { border-radius: 18px; padding: 1rem; }
+      .pinned-title { font-size: 1.08rem; }
+      .footer-nav { gap: 0.5rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="hero-bg-wrap" class="hero-bg-wrap" aria-hidden="true">
+    <div id="hero-bg" class="hero-bg-overlay"></div>
+  </div>
+
+  <a href="#main-content" class="skip-link">本文へスキップ</a>
+
+  <header class="site-header">
+    <nav class="site-nav" aria-label="グローバルナビゲーション">
+      <a href="index.html" class="nav-logo-container">
+        <div id="logo-area"></div>
+        <span class="nav-logo-text">光一天</span>
+      </a>
+      <div class="nav-links" id="nav-menu">
+        <a href="#top" class="active">ホーム</a>
+        <a href="about.html">チーム紹介</a>
+        <a href="works.html">作品一覧</a>
+        <a href="news.html">お知らせ</a>
+        <a href="#contact">連絡先</a>
+        <a href="10th-anniv.html" class="nav-anniv-btn">10周年記念公演</a>
+        <a href="sponsors.html" class="nav-sponsors-btn">協賛</a>
+      </div>
+      <div class="hamburger" onclick="toggleMenu()" id="hamburger">
+        <span></span><span></span><span></span>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main-content">
+    <section class="hero" id="top" aria-labelledby="hero-heading">
+      <div class="hero-content fade-up">
+        <p class="hero-subtitle">公立千歳科学技術大学<br>YOSAKOIソーラン部</p>
+        <h1 class="hero-title serif" id="hero-heading">光一天</h1>
+        <p class="hero-desc">天からさした一筋の光のように。<br>私たちは、異彩を放つ光となる。</p>
+      </div>
+      <a href="#intro" class="hero-scroll-hint" aria-label="下へスクロールして続きを読む">
+        <span class="hero-scroll-hint-visual">
+          <svg class="hero-scroll-hint-svg" viewBox="0 -11 24 46" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M12 -9V33M12 33l-5.25-5.25" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+      </a>
+    </section>
+
+    <nav class="quick-links-strip fade-up" aria-label="ページ内の主要セクション">
+      <a href="#intro">チームについて</a>
+      <a href="#news">お知らせ・SNS</a>
+      <a href="#pinned">ピックアップ</a>
+      <a href="#contact">お問い合わせ</a>
+    </nav>
+
+    <section id="intro" class="home-section" aria-labelledby="heading-intro">
+      <h2 id="heading-intro" class="section-title serif fade-up">光一天について</h2>
+      <div class="apple-card intro-card fade-up">
+        <p class="intro-lead">公立千歳科学技術大学 光一天は、大学生と社会人が一同に会して踊るYOSAKOIソーランチームです。</p>
+        <p class="intro-body">
+          チーム名は「紅一点」に由来し、多くの集団の中でひときわ異彩を放つ存在になるという思いが込められています。全国各地の大会などへの出演やイベントでの演舞を通じて、鳴子の音とともに「一天の光」を届けています。
+        </p>
+        <div class="intro-actions">
+          <a href="about.html" class="link-pill">チーム紹介・沿革を見る</a>
+          <a href="works.html" class="link-pill">作品一覧へ</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="news" class="home-section" aria-labelledby="heading-news">
+      <h2 id="heading-news" class="section-title serif fade-up">お知らせ・SNS</h2>
+      <div class="grid-container">
+        <div class="apple-card fade-up news-panel">
+          <h3 class="serif" style="margin-bottom:1rem;">最新のお知らせ</h3>
+          <div id="news-content"></div>
+          <div style="margin-top:1.5rem; text-align:center;">
+            <a href="news.html" style="color:var(--text-main); font-weight:700; text-decoration:none;">お知らせ一覧を見る →</a>
+          </div>
+        </div>
+        <div class="apple-card fade-up instagram-feature-card news-panel" style="display:flex; flex-direction:column; justify-content:flex-start; align-items:stretch;">
+          <h3 class="serif">Instagram</h3>
+          <p style="margin-top:0.9rem; color:var(--text-sub); font-size:0.92rem;">最新情報はInstagramで更新しています</p>
+          <a href="https://www.instagram.com/kouittenyosakoi/" class="instagram-preview-card fade-up" target="_blank" rel="noopener noreferrer" aria-label="Instagram @kouittenyosakoi を開く">
+            <div class="instagram-preview-thumb" id="instagram-preview-thumb"></div>
+            <div class="instagram-preview-footer">
+              <span class="instagram-preview-handle">@kouittenyosakoi</span>
+              <span class="instagram-preview-label">Instagramで見る</span>
+            </div>
+          </a>
+          <div id="instagram-home-embed" class="instagram-home-embed" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="pinned" class="home-section" aria-labelledby="heading-pinned">
+      <h2 id="heading-pinned" class="section-title serif fade-up">ピックアップ</h2>
+      <div id="pinned-content" class="pinned-grid fade-up">
+        <p style="text-align:center; grid-column:1/-1;">読み込み中...</p>
+      </div>
+    </section>
+
+    <section id="contact" class="home-section" aria-labelledby="heading-contact">
+      <h2 id="heading-contact" class="section-title serif fade-up">連絡先</h2>
+      <div class="contact-home-stack">
+        <div class="apple-card news-panel fade-up">
+          <h3 class="contact-home-h3 serif">団体情報</h3>
+          <dl class="contact-list">
+            <div class="contact-row">
+              <dt>団体名</dt>
+              <dd>光一天（公立千歳科学技術大学 YOSAKOIソーラン部）</dd>
+            </div>
+            <div class="contact-row">
+              <dt>所属</dt>
+              <dd>
+                <a href="https://www.chitose.ac.jp/" target="_blank" rel="noopener noreferrer" class="contact-link">公立千歳科学技術大学</a>
+              </dd>
+            </div>
+          </dl>
+        </div>
+        <div class="apple-card news-panel fade-up">
+          <h3 class="contact-home-h3 serif">お問い合わせ</h3>
+          <p class="contact-note">ご質問・お問い合わせは Instagramのダイレクトメッセージ（DM） にて承っております。返信にお時間をいただく場合がありますのであらかじめご了承ください。</p>
+          <dl class="contact-list">
+            <div class="contact-row" style="border-bottom: none; padding-top: 0;">
+              <dt style="align-self: center;">公式Instagram</dt>
+              <dd>
+                <a href="https://www.instagram.com/kouittenyosakoi/" target="_blank" rel="noopener noreferrer" class="contact-link">instagram.com/kouittenyosakoi</a>
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer-inner">
+      <nav class="footer-nav" aria-label="フッターナビゲーション">
+        <a href="index.html">ホーム</a>
+        <a href="about.html">チーム紹介</a>
+        <a href="works.html">作品一覧</a>
+        <a href="news.html">お知らせ</a>
+        <a href="sponsors.html">協賛</a>
+        <a href="10th-anniv.html">10周年記念公演</a>
+        <a href="#contact">連絡先</a>
+      </nav>
+      <p class="footer-copy">&copy; 2026 公立千歳科学技術大学 光一天</p>
+    </div>
+  </footer>
+
+  <script src="shared/site-shell.js"></script>
+  <script>
+    async function safeFetchJSON(url) {
+        try {
+            const res = await fetch(url, { cache: 'no-cache' });
+            if (!res.ok) return [];
+            return await res.json();
+        } catch(e) {
+            console.error("Fetch Error:", e);
+            return [];
+        }
+    }
+
+    async function init() {
+      const assets = await loadSharedLogo();
+
+      const igThumbHost = document.getElementById('instagram-preview-thumb');
+      if (igThumbHost) {
+        const thumbSrc = assets.logo || assets.hero || '';
+        if (thumbSrc) {
+          const img = document.createElement('img');
+          img.className = 'instagram-preview-img';
+          img.alt = '';
+          img.setAttribute('aria-hidden', 'true');
+          img.loading = 'lazy';
+          img.src = thumbSrc;
+          igThumbHost.appendChild(img);
+        } else {
+          igThumbHost.innerHTML = '<div class="instagram-preview-placeholder"><svg width="52" height="52" viewBox="0 0 24 24" aria-hidden="true" fill="#fff"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></div>';
+        }
+      }
+
+      function sanitizeInstagramPermalink(url) {
+        if (!url || typeof url !== 'string') return '';
+        try {
+          const u = new URL(url.trim());
+          const host = u.hostname.replace(/^www\./, '');
+          if (host !== 'instagram.com') return '';
+          const path = u.pathname.replace(/\/+$/, '');
+          if (!path || path === '/') return '';
+          return `https://www.instagram.com${path}/`;
+        } catch (_) {
+          return '';
+        }
+      }
+
+      const igPermalink = sanitizeInstagramPermalink(assets.instagramPermalink || '');
+      const igWrap = document.getElementById('instagram-home-embed');
+      if (igWrap && igPermalink) {
+        igWrap.innerHTML =
+          `<blockquote class="instagram-media" data-instgrm-permalink="${igPermalink.replace(/"/g, '&quot;')}" data-instgrm-version="14" style="background:#FFF;border:0;border-radius:14px;margin:0 auto;max-width:540px;min-width:220px;width:100%;padding:0;"></blockquote>`;
+        if (!window.__kouittenInstagramEmbedLoading) {
+          window.__kouittenInstagramEmbedLoading = true;
+          const sc = document.createElement('script');
+          sc.async = true;
+          sc.src = 'https://www.instagram.com/embed.js';
+          sc.onload = () => {
+            try {
+              if (window.instgrm && window.instgrm.Embeds) window.instgrm.Embeds.process();
+            } catch (_) {}
+          };
+          document.body.appendChild(sc);
+        } else if (window.instgrm && window.instgrm.Embeds) {
+          window.instgrm.Embeds.process();
+        }
+      }
+
+      const heroEl = document.getElementById('top');
+      const bgLayer = document.getElementById('hero-bg');
+
+      if (assets.hero && bgLayer) {
+        bgLayer.style.backgroundImage = `linear-gradient(rgba(245,245,247,0.74), rgba(245,245,247,0.74)), url('${assets.hero}')`;
+      }
+      setTimeout(() => {
+        heroEl.classList.add('hero-ready');
+        if (assets.hero && bgLayer) bgLayer.classList.add('bg-visible');
+      }, 1000);
+
+      const pData = await safeFetchJSON('/api/content?type=news&pinned=true');
+      document.getElementById('pinned-content').innerHTML = pData.length ? pData.map(item => `
+        <a href="news-detail.html?id=${encodeURIComponent(item.id)}" class="pinned-card">
+          ${item.image ? `<img src="${item.image}" class="pinned-image">` : `<div class="pinned-image" style="display:flex;align-items:center;justify-content:center;color:#999;">No Image</div>`}
+          <div class="pinned-title">${item.title}</div>
+          <div style="font-size:0.9rem; color:var(--text-sub);">${item.date}</div>
+        </a>`).join('') : '<p style="grid-column:1/-1; text-align:center;">ピックアップ記事はありません</p>';
+
+      const nData = await safeFetchJSON('/api/content?type=news&limit=5');
+      document.getElementById('news-content').innerHTML = nData.length ? nData.map(item => {
+        const thumb = item.thumbnailUrl || item.image || (item.images && item.images.length > 0 ? item.images[0] : null);
+        return `
+        <a href="news-detail.html?id=${encodeURIComponent(item.id)}" class="news-item">
+          ${thumb ? `<img src="${thumb}" class="news-item-thumb" alt="">` : ''}
+          <div class="news-item-content">
+            <div style="font-weight:700;">${item.title}</div>
+            <div style="font-size:0.85rem; color:var(--text-sub);">${item.date}</div>
+          </div>
+        </a>`}).join('') : '<p style="text-align:center; color:#888;">お知らせはありません</p>';
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => { if(entry.isIntersecting) entry.target.classList.add('visible'); });
+      }, { threshold: 0.1 });
+      document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+    }
+    init();
+  </script>
+  <script src="anniv-visibility.js"></script>
+</body>
+</html>

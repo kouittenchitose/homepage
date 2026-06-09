@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>協賛 | 光一天</title>
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared/site-nav.css">
+  <style>
+    :root {
+      --primary: #facc15; --primary-hover: #eab308; --anniv-color: #ef4444;
+      --bg-main: #f5f5f7; --bg-surface: #ffffff;
+      --text-main: #1d1d1f; --text-sub: #86868b;
+      --line: #e5e5ea; --shadow: 0 10px 40px rgba(0,0,0,0.06);
+      --nav-height: 64px; --font-serif: 'Shippori Mincho', serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Noto Sans JP', sans-serif; background-color: var(--bg-main); color: var(--text-main); line-height: 1.6; padding-top: var(--nav-height); }
+    h1, h2, h3, .serif { font-family: var(--font-serif); }
+
+    .page-header { padding: 3rem 4% 1.5rem; text-align: center; }
+    .page-title { font-size: clamp(2rem, 6vw, 3rem); font-weight: 800; color: var(--text-main); margin-bottom: 0.5rem; }
+
+    .sponsors-wrap { max-width: 960px; margin: 0 auto; padding: 0 4% 3.5rem; }
+    #sponsors-intro {
+      background: var(--bg-surface);
+      border-radius: 20px;
+      padding: 1.35rem 1.5rem;
+      margin-bottom: 1.75rem;
+      box-shadow: var(--shadow);
+      font-size: 1.02rem;
+      line-height: 1.85;
+      color: #333;
+    }
+
+    #sponsors-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .sponsor-card {
+      background: var(--bg-surface);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+    .sponsor-card-inner {
+      padding: 1.35rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 1rem;
+      min-height: 140px;
+      justify-content: center;
+    }
+    .sponsor-logo {
+      max-width: 100%;
+      max-height: 72px;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+    }
+    .sponsor-name { font-weight: 800; font-size: 1.05rem; }
+    .sponsor-name-link {
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: var(--text-main);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .sponsor-name-link:hover { color: var(--primary-hover); }
+
+    @media (max-width: 860px) {
+      .page-header { padding: 2rem 5% 1rem; }
+      .sponsors-wrap { padding: 0 5% 2.5rem; }
+      #sponsors-list { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body data-sponsors-page="true">
+
+  <nav class="site-nav">
+    <a href="index.html" class="nav-logo-container">
+      <div id="logo-area"></div>
+      <span class="nav-logo-text">光一天</span>
+    </a>
+    <div class="nav-links" id="nav-menu">
+      <a href="index.html">Home</a>
+      <a href="about.html">チーム紹介</a>
+      <a href="works.html">作品一覧</a>
+      <a href="news.html">お知らせ</a>
+      <a href="contact.html">連絡先</a>
+      <a href="10th-anniv.html" class="nav-anniv-btn">10周年記念公演</a>
+      <a href="sponsors.html" class="nav-sponsors-btn active">協賛</a>
+    </div>
+    <div class="hamburger" onclick="toggleMenu()" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <header class="page-header">
+    <h1 class="page-title serif fade-up visible">協賛企業・団体</h1>
+    <p style="color: var(--text-sub); font-size: 0.95rem;">ご支援・ご協力に深く感謝申し上げます</p>
+  </header>
+
+  <div class="sponsors-wrap">
+    <div id="sponsors-intro" hidden></div>
+    <div id="sponsors-list" aria-live="polite"></div>
+  </div>
+
+  <script src="shared/site-shell.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => { loadSharedLogo(); });
+  </script>
+  <script src="anniv-visibility.js"></script>
+</body>
+</html>

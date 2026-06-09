@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>作品詳細 | 光一天</title>
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared/site-nav.css">
+  <style>
+    :root {
+      --primary: #facc15; --primary-hover: #eab308; --anniv-color: #ef4444;
+      --bg-main: #f5f5f7; --bg-surface: #ffffff;
+      --text-main: #1d1d1f; --text-sub: #86868b;
+      --line: #e5e5ea;
+      --nav-height: 64px; --font-serif: 'Shippori Mincho', serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg-main); color: var(--text-main); margin: 0; padding-top: calc(var(--nav-height) + 20px); }
+    
+    .work-detail-page { width: 100%; max-width: min(1120px, 96vw); margin: 0 auto 3rem; padding: 0 clamp(14px, 4vw, 36px); box-sizing: border-box; }
+    .work-detail-card {
+      width: 100%; min-width: 0; background: var(--bg-surface); padding: clamp(22px, 4vw, 42px);
+      border-radius: 24px; box-shadow: 0 4px 30px rgba(0,0,0,0.04); box-sizing: border-box;
+    }
+    .work-year { font-weight: 800; font-size: 1.2rem; color: var(--text-sub); display: block; margin-bottom: 5px; }
+    h1 { font-family: var(--font-serif); font-size: 2.4rem; margin-bottom: 1.2rem; line-height: 1.3; }
+    .main-image { width: 100%; max-height: 480px; object-fit: cover; border-radius: 16px; margin: 18px 0 24px; background: #eee; }
+    
+    .section-title { font-size: 1.3rem; font-weight: 800; margin: 0 0 1rem; border-bottom: 2px solid var(--primary); display: inline-block; padding-bottom: 4px; }
+    .body-text { white-space: pre-wrap; line-height: 1.9; color: #333; font-size: 1.05rem; margin-bottom: 1.5rem; overflow-wrap: anywhere; width: 100%; min-width: 0; }
+
+    .work-detail-sections { display: flex; flex-direction: column; gap: 1rem; width: 100%; min-width: 0; margin-top: 0.5rem; }
+    .work-section-card {
+      width: 100%; min-width: 0; border-radius: 18px; border: 1px solid var(--line);
+      background: linear-gradient(165deg, #ffffff 0%, #fbfbfd 55%, #f6f6f8 100%);
+      box-shadow: 0 2px 14px rgba(0,0,0,0.04); overflow: hidden;
+    }
+    .work-section-head {
+      font-family: var(--font-serif); font-size: clamp(1.05rem, 2.5vw, 1.18rem);
+      font-weight: 800; padding: 14px 18px; margin: 0;
+      background: linear-gradient(90deg, rgba(250, 204, 21, 0.22) 0%, rgba(250, 204, 21, 0.06) 100%);
+      border-bottom: 1px solid var(--line); letter-spacing: 0.02em;
+    }
+    .work-section-body {
+      margin: 0; padding: 18px 20px 22px; white-space: pre-wrap; line-height: 2; color: #2d2d2f;
+      font-size: 1.05rem; width: 100%; min-width: 0; box-sizing: border-box; overflow-wrap: anywhere;
+    }
+
+    .awards-box { background: #fffcf0; padding: 1.2rem; border-radius: 16px; border-left: 4px solid var(--primary); margin-top: 1.5rem; }
+    .award-item { font-size: 0.95rem; font-weight: 700; color: #b42318; display: block; margin-bottom: 8px; }
+
+    .back-btn { display: inline-block; margin-bottom: 16px; text-decoration: none; color: var(--text-sub); font-weight: 700; transition: 0.2s; }
+    .back-btn:hover { color: var(--text-main); }
+
+    @media (max-width: 768px) {
+      .work-detail-page { padding: 0 12px; }
+      .work-detail-card { padding: 20px 16px; border-radius: 16px; }
+      h1 { font-size: 1.8rem; }
+      .section-title { font-size: 1.1rem; }
+      .body-text, .work-section-body { font-size: 0.98rem; line-height: 1.85; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="site-nav">
+    <a href="index.html" class="nav-logo-container">
+      <div id="logo-area"></div>
+      <span class="nav-logo-text">光一天</span>
+    </a>
+    <div class="nav-links" id="nav-menu">
+      <a href="index.html">Home</a>
+      <a href="about.html">チーム紹介</a>
+      <a href="works.html" class="active">作品一覧</a>
+      <a href="news.html">お知らせ</a>
+      <a href="contact.html">連絡先</a>
+      <a href="10th-anniv.html" class="nav-anniv-btn">10周年記念公演</a>
+      <a href="sponsors.html" class="nav-sponsors-btn">協賛</a>
+    </div>
+    <div class="hamburger" onclick="toggleMenu()" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <div class="work-detail-page" id="content">
+    <div style="text-align:center; padding: 50px; color: var(--text-sub);">読み込み中...</div>
+  </div>
+
+  <script src="shared/work-detail-sections.js"></script>
+  <script src="shared/site-shell.js"></script>
+  <script>
+    function escapeHtml(str) {
+      if (str == null || str === '') return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function renderDetailSectionsHtml(work) {
+      const sections = WorkSections.workSectionsForWork(work);
+      if (!sections.length) return '';
+      const blocks = sections.map((s) => `
+        <article class="work-section-card">
+          <h3 class="work-section-head serif">${escapeHtml(s.title || 'セクション')}</h3>
+          <div class="work-section-body">${escapeHtml(s.body)}</div>
+        </article>
+      `).join('');
+      return `
+          <h2 class="section-title">詳細</h2>
+          <div class="work-detail-sections">${blocks}</div>`;
+    }
+
+    async function load() {
+      const assets = await loadSharedLogo();
+
+      const id = new URLSearchParams(location.search).get('id');
+      if (!id) {
+        document.getElementById('content').innerHTML = '<a href="works.html" class="back-btn">← 作品一覧に戻る</a><p>作品が見つかりません。</p>';
+        return;
+      }
+      try {
+        const res = await fetch(`/api/content?type=works&id=${id}`, { cache: 'no-cache' });
+        if(!res.ok) throw new Error();
+        const data = await res.json();
+        console.log('[Work Detail] Loaded data:', data);
+        if (data.image) console.log('[Work Detail] Image URL:', data.image);
+        
+        let awardsHtml = '';
+        if (data.awards && data.awards.length > 0 && data.awards[0] !== "") {
+            awardsHtml = `<div class="awards-box">
+                <div class="section-title">受賞歴</div>
+                ${data.awards.map(a => `<span class="award-item">🏆 ${escapeHtml(a)}</span>`).join('')}
+            </div>`;
+        }
+
+          document.getElementById('content').innerHTML = `
+          <div class="work-detail-card">
+          <a href="works.html" class="back-btn">← 作品一覧に戻る</a>
+          <span class="work-year">${escapeHtml(data.year || '')}</span>
+          <h1 class="serif">${escapeHtml(data.title)}</h1>
+          ${data.image ? `<img src="${escapeHtml(data.image)}" class="main-image" alt="" onerror="console.error('[Image Load Error] Failed to load:', this.src); this.replaceWith(document.createTextNode('画像を読み込めませんでした'));">` : ''}
+          
+          ${(data.story || '').trim() ? `
+          <div class="section-title">概要・ストーリー</div>
+          <div class="body-text">${escapeHtml(data.story)}</div>
+          ` : ''}
+          
+          ${renderDetailSectionsHtml(data)}
+
+          ${awardsHtml}
+          </div>
+        `;
+      } catch(e) { document.getElementById('content').innerHTML = '<a href="works.html" class="back-btn">← 作品一覧に戻る</a><p>作品の取得に失敗しました。</p>'; }
+    }
+    load();
+  </script>
+  <script src="anniv-visibility.js"></script>
+</body>
+</html>
