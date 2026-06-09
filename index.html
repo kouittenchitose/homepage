@@ -232,22 +232,24 @@
       padding-bottom: 0.25rem;
       border-top: 1px solid rgba(255, 255, 255, 0.35);
     }
-    .page-scroll-nav-track {
-      display: flex;
-      flex-wrap: nowrap;
-      align-items: stretch;
-      justify-content: flex-start;
-      gap: 0.75rem;
+    .page-scroll-nav-viewport {
       overflow-x: auto;
       overflow-y: hidden;
       padding: 1.35rem 1.65rem 1.5rem 1.75rem;
       scroll-padding-inline: 1.25rem;
-      scroll-snap-type: x proximity;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
       overscroll-behavior-x: contain;
     }
-    .page-scroll-nav-track::-webkit-scrollbar { display: none; }
+    .page-scroll-nav-viewport::-webkit-scrollbar { display: none; }
+    .page-scroll-nav-track {
+      display: inline-flex;
+      flex-wrap: nowrap;
+      align-items: stretch;
+      gap: 0.75rem;
+      scroll-snap-type: x proximity;
+      min-width: min-content;
+    }
     .page-scroll-card {
       flex: 0 0 auto;
       scroll-snap-align: start;
@@ -288,11 +290,15 @@
     .page-scroll-card.nav-sponsors-btn { display: none; }
 
     @media (min-width: 861px) {
-      .page-scroll-nav-track {
+      .page-scroll-nav-viewport {
+        display: flex;
         justify-content: center;
         overflow-x: visible;
         padding-inline: clamp(24px, 5%, 48px);
         scroll-padding-inline: 0;
+      }
+      .page-scroll-nav-track {
+        scroll-snap-type: none;
       }
     }
 
@@ -395,8 +401,17 @@
       box-shadow: var(--shadow);
     }
     .instagram-feature-card { align-items: stretch !important; text-align: center; }
-    .instagram-home-embed { width: 100%; margin-top: 1rem; min-height: 120px; display: flex; justify-content: center; align-items: flex-start; }
+    .instagram-home-embed { width: 100%; margin-top: 1rem; min-height: 120px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
     .instagram-home-embed .instagram-media { margin-left: auto !important; margin-right: auto !important; max-width: 540px !important; width: 100% !important; min-width: 0 !important; }
+    .instagram-profile-embed {
+      width: 100%; max-width: 540px; min-height: 480px; height: clamp(420px, 62vh, 640px);
+      border: 0; border-radius: 14px; background: #fff;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+    }
+    .instagram-embed-fallback {
+      margin: 0.75rem 0 0; font-size: 0.9rem; color: var(--text-sub); text-align: center;
+    }
+    .instagram-embed-fallback a { color: var(--text-main); font-weight: 700; }
     #news-content { min-width: 0; }
     .news-item {
       display: flex;
@@ -432,7 +447,8 @@
       .hero-desc { font-size: 1rem; line-height: 1.78; letter-spacing: 0.06em; }
       .hero-scroll-hint { right: clamp(0.75rem, 4vw, 1.75rem); bottom: clamp(0.4rem, 2vh, 1.25rem); }
       .page-scroll-nav { margin-top: clamp(3rem, 7vw, 5rem); }
-      .page-scroll-nav-track { padding: 1.1rem 1.35rem 1.25rem 1.85rem; gap: 0.6rem; scroll-padding-inline: 1.15rem; }
+      .page-scroll-nav-viewport { padding: 1.1rem 1.35rem 1.25rem 1.85rem; scroll-padding-inline: 1.15rem; }
+      .page-scroll-nav-track { gap: 0.6rem; }
       .page-scroll-card { font-size: 0.84rem; padding: 0.65rem 1.1rem; min-height: 44px; border-radius: 14px; }
       section { padding: 68px 5% 56px; }
       .contact-row { grid-template-columns: 1fr; gap: 0.35rem; padding: 0.95rem 0; }
@@ -490,13 +506,15 @@
     </section>
 
     <nav class="page-scroll-nav fade-up" aria-label="サイト内ページ一覧">
-      <div class="page-scroll-nav-track">
-        <a href="about.html" class="page-scroll-card">チーム紹介</a>
-        <a href="works.html" class="page-scroll-card">作品一覧</a>
-        <a href="news.html" class="page-scroll-card">お知らせ</a>
-        <a href="sponsors.html" class="page-scroll-card nav-sponsors-btn">協賛</a>
-        <a href="10th-anniv.html" class="page-scroll-card nav-anniv-btn">10周年記念公演</a>
-        <a href="#contact" class="page-scroll-card">連絡先</a>
+      <div class="page-scroll-nav-viewport">
+        <div class="page-scroll-nav-track">
+          <a href="about.html" class="page-scroll-card">チーム紹介</a>
+          <a href="works.html" class="page-scroll-card">作品一覧</a>
+          <a href="news.html" class="page-scroll-card">お知らせ</a>
+          <a href="sponsors.html" class="page-scroll-card nav-sponsors-btn">協賛</a>
+          <a href="10th-anniv.html" class="page-scroll-card nav-anniv-btn">10周年記念公演</a>
+          <a href="#contact" class="page-scroll-card">連絡先</a>
+        </div>
       </div>
     </nav>
 
@@ -589,6 +607,7 @@
   </footer>
 
   <script src="shared/site-shell.js"></script>
+  <script src="shared/instagram-home.js"></script>
   <script>
     async function safeFetchJSON(url) {
         try {
@@ -604,39 +623,9 @@
     async function init() {
       const assets = await loadSharedLogo();
 
-      function sanitizeInstagramPermalink(url) {
-        if (!url || typeof url !== 'string') return '';
-        try {
-          const u = new URL(url.trim());
-          const host = u.hostname.replace(/^www\./, '');
-          if (host !== 'instagram.com') return '';
-          const path = u.pathname.replace(/\/+$/, '');
-          if (!path || path === '/') return '';
-          return `https://www.instagram.com${path}/`;
-        } catch (_) {
-          return '';
-        }
-      }
-
-      const igPermalink = sanitizeInstagramPermalink(assets.instagramPermalink || '');
       const igWrap = document.getElementById('instagram-home-embed');
-      if (igWrap && igPermalink) {
-        igWrap.innerHTML =
-          `<blockquote class="instagram-media" data-instgrm-permalink="${igPermalink.replace(/"/g, '&quot;')}" data-instgrm-version="14" style="background:#FFF;border:0;border-radius:14px;margin:0 auto;max-width:540px;min-width:220px;width:100%;padding:0;"></blockquote>`;
-        if (!window.__kouittenInstagramEmbedLoading) {
-          window.__kouittenInstagramEmbedLoading = true;
-          const sc = document.createElement('script');
-          sc.async = true;
-          sc.src = 'https://www.instagram.com/embed.js';
-          sc.onload = () => {
-            try {
-              if (window.instgrm && window.instgrm.Embeds) window.instgrm.Embeds.process();
-            } catch (_) {}
-          };
-          document.body.appendChild(sc);
-        } else if (window.instgrm && window.instgrm.Embeds) {
-          window.instgrm.Embeds.process();
-        }
+      if (igWrap && assets.instagramPermalink) {
+        InstagramHome.mountInstagramHome(igWrap, assets.instagramPermalink);
       }
 
       const heroEl = document.getElementById('top');

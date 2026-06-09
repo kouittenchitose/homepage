@@ -141,8 +141,8 @@ async function renderSiteInstagramSettings() {
       wrap.innerHTML = `
         <h4 style="margin:0 0 12px; border-bottom:2px solid var(--accent); padding-bottom:5px; display:inline-block;">Instagram 埋め込み（トップページ）</h4>
         <p style="font-size:0.92rem;color:#555;margin-bottom:10px;max-width:720px;line-height:1.55;">
-          <strong>公開中の投稿・リール・IGTV</strong>のURLを貼ると、トップページのInstagram欄に公式の埋め込み枠が表示されます。
-          プロフィールURL（<code>instagram.com/ユーザー名</code>）のみでは埋め込めないため、その場合は引き続き下のリンクのみ表示されます。
+          <strong>公開中の投稿・リール</strong>のURLを貼ると、その1件を大きく表示します。
+          プロフィールURL（<code>instagram.com/ユーザー名</code>）の場合は、タイムライン風の埋め込み枠を表示します。
         </p>
         <input type="url" id="site-instagram-url" placeholder="https://www.instagram.com/p/xxxx/" style="width:100%;max-width:560px;padding:10px;margin-bottom:10px;box-sizing:border-box;">
         <div><button type="button" class="btn-secondary" onclick="saveSiteInstagram()">Instagram設定を保存</button></div>`;
