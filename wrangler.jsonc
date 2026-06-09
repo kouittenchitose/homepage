@@ -11,9 +11,5 @@
       "binding": "MEDIA_BUCKET",
       "bucket_name": "testkouitten-media"
     }
-  ],
-  "vars": {
-    "ADMIN_USER": "admin",
-    "ADMIN_PASSWORD": "password"
-  }
+  ]
 }

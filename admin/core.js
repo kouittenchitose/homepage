@@ -63,15 +63,27 @@ function toggleAdminMenu() {
     }
 
 async function checkAuth() {
-      auth.user = document.getElementById('user').value;
+      auth.user = document.getElementById('user').value.trim();
       auth.pass = document.getElementById('pass').value;
+      const errEl = document.getElementById('login-err');
+      errEl.textContent = '';
       try {
         await api('ping'); 
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('cms-screen').style.display = 'flex';
         await Promise.all([loadData('news'), loadData('works'), loadData('about'), loadData('trash')]);
         loadMedia();
-      } catch(e) { document.getElementById('login-err').textContent = 'ユーザー名またはパスワードが間違っています。'; }
+      } catch (e) {
+        if (e && e.status === 401) {
+          errEl.textContent = 'ユーザー名またはパスワードが間違っています。';
+        } else if (e && e.status === 404) {
+          errEl.textContent = '管理APIに接続できません（/api/admin-core が見つかりません）。Functions のデプロイを確認してください。';
+        } else if (e && e.status >= 500) {
+          errEl.textContent = `サーバーエラー（${e.status}）。R2バインディング MEDIA_BUCKET の設定を確認してください。`;
+        } else {
+          errEl.textContent = e && e.message ? e.message : 'ログインに失敗しました。';
+        }
+      }
     }
 
 async function api(path, body = {}) {
@@ -79,7 +91,16 @@ async function api(path, body = {}) {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...auth, ...body, action: path })
       });
-      if(!res.ok) throw new Error('API Error');
+      if (!res.ok) {
+        let detail = '';
+        try {
+          const data = await res.json();
+          detail = data && data.error ? `: ${data.error}` : '';
+        } catch (_) {}
+        const err = new Error(`API Error${detail}`);
+        err.status = res.status;
+        throw err;
+      }
       return await res.json();
     }
 
