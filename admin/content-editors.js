@@ -256,8 +256,8 @@ async function saveNews() {
   if (idx >= 0) dataCache.news[idx] = item; else dataCache.news.unshift(item);
   dataCache.news.sort((a, b) => new Date(b.date) - new Date(a.date));
   await saveData('news');
-  closeEditor('news');
   clearEditorState();
+  closeEditor('news');
   setTimeout(() => {
     const editor = document.getElementById('news-editor');
     if (editor) editor.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -314,8 +314,8 @@ async function saveWork() {
   if (idx >= 0) dataCache.works[idx] = item; else dataCache.works.unshift(item);
   dataCache.works.sort((a, b) => b.year - a.year);
   await saveData('works');
-  closeEditor('works');
   clearEditorState();
+  closeEditor('works');
   setTimeout(() => {
     const editor = document.getElementById('works-editor');
     if (editor) editor.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -391,8 +391,8 @@ async function saveAboutItem() {
   }
 
   await saveData('about');
-  closeEditor('about');
   clearEditorState();
+  closeEditor('about');
   renderAbout();
   setTimeout(() => {
     const editor = document.getElementById('about-editor');

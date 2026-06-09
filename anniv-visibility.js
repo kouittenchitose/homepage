@@ -36,7 +36,10 @@ async function fetchSponsorsPayload() {
 
 function setAnnivButtonVisibility(published) {
   document.querySelectorAll('.nav-anniv-btn').forEach((btn) => {
-    btn.style.display = published ? 'inline-block' : 'none';
+    const display = published
+      ? (btn.classList.contains('page-scroll-card') ? 'inline-flex' : 'inline-block')
+      : 'none';
+    btn.style.display = display;
   });
 }
 

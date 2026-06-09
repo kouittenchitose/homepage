@@ -117,34 +117,8 @@ async function renderFixedAssets(files) {
     }
 
 async function loadMedia() {
-      const folder = document.getElementById('view-folder').value; // 'assets' 固定
-      const res = await api('list-files', { folder });
-      const list = document.getElementById('media-list');
+      const res = await api('list-files', { folder: 'assets' });
       const assets = res.files || [];
-      list.innerHTML = '';
-      assets.forEach((f, i) => {
-        const url = encodeURI(`/media/${f.key}`);
-        const keyId = `media-rename-${i}`;
-        const keyStr = JSON.stringify(f.key);
-        const fixed = isFixedAssetKey(f.key);
-        list.innerHTML += `
-          <div class="list-item" style="flex-direction:row; align-items:center; gap:12px;">
-            <img src="${url}" style="width:50px; height:50px; object-fit:cover; border-radius:6px; background:#eee;">
-            <div class="list-item-content" style="flex:1; margin-left:15px;">
-              <strong>${f.key}</strong>
-              <div style="margin:8px 0;"><input type="text" value="${url}" readonly onclick="this.select()" style="padding:6px; font-size:0.9rem; width:100%; margin:0;"></div>
-              <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
-                <input id="${keyId}" type="text" value="${f.key}" style="flex:1; padding:6px; font-size:0.9rem;" ${fixed ? 'readonly' : ''}>
-                <button class="btn-secondary" style="white-space:nowrap;" onclick="renameMedia(${keyStr}, '${keyId}')">${fixed ? '固定名' : '名前変更'}</button>
-                <button class="btn-secondary" style="white-space:nowrap;" onclick="copyHtmlTag('${url}')">HTMLタグをコピー</button>
-              </div>
-              ${fixed ? '<div style="margin-top:6px; color:#777; font-size:0.84rem;">※ 固定画像のため、名前変更はできません。</div>' : ''}
-            </div>
-            <div class="list-item-actions">
-              <button class="btn-danger" onclick="deleteMedia('${f.key}')">削除</button>
-            </div>
-          </div>`;
-      });
       renderFixedAssets(assets);
       renderSiteInstagramSettings();
     }
@@ -219,16 +193,6 @@ async function deleteMedia(key) {
         : '削除しますか？';
       if (!confirm(msg)) return;
       await api('delete-file', { key });
-      loadMedia();
-    }
-
-async function renameMedia(oldKey, inputId) {
-      if (isFixedAssetKey(oldKey)) return alert('固定画像は名前変更できません。');
-      const newKey = document.getElementById(inputId).value.trim();
-      if (!newKey) return alert('新しいファイル名を入力してください');
-      if (newKey === oldKey) return alert('ファイル名に変更はありません');
-      if (!confirm(`ファイル名を「${oldKey}」から「${newKey}」に変更しますか？`)) return;
-      await api('rename-file', { oldKey, newKey });
       loadMedia();
     }
 

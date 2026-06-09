@@ -6,6 +6,26 @@ function toggleMenu() {
   hamburger.classList.toggle('active');
 }
 
+function closeMenu() {
+  const menu = document.getElementById('nav-menu');
+  const hamburger = document.getElementById('hamburger');
+  if (!menu || !hamburger) return;
+  menu.classList.remove('active');
+  hamburger.classList.remove('active');
+}
+
+function initNavMenuCloseOnNavigate() {
+  document.querySelectorAll('#nav-menu a, .nav-logo-container').forEach((link) => {
+    link.addEventListener('click', closeMenu);
+  });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initNavMenuCloseOnNavigate);
+} else {
+  initNavMenuCloseOnNavigate();
+}
+
 async function loadSharedLogo() {
   try {
     const res = await fetch('/api/admin-core', {
