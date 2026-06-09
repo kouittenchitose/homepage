@@ -29,6 +29,17 @@ const defaultAwards = [
   { year: "2008年 『紲（きずな）』", text: "第17回YOSAKOIソーラン祭り 『新人賞』『敢闘賞』" }
 ];
 
+async function readPublishedConfig(bucket) {
+  const obj = await bucket.get('data/anniv-config.json');
+  if (!obj) return { published: false };
+  try {
+    const data = JSON.parse(await obj.text());
+    return { published: !!(data && data.published) };
+  } catch {
+    return { published: false };
+  }
+}
+
 const cacheHeaders = { "Content-Type": "application/json", "Cache-Control": "public, max-age=0, must-revalidate" };
 const computeEtag = (text) => {
   let hash = 0;
@@ -110,6 +121,8 @@ export async function onRequest(context) {
     if (type === 'anniv') {
       if (!data || Array.isArray(data) || typeof data !== 'object') data = { content: '' };
       if (typeof data.content !== 'string') data.content = '';
+      const annivConfig = await readPublishedConfig(env.MEDIA_BUCKET);
+      if (!annivConfig.published) data = { content: '' };
     }
     if (type === 'sponsors') {
       if (!data || Array.isArray(data) || typeof data !== 'object') data = { published: false, intro: '', items: [] };
@@ -124,6 +137,7 @@ export async function onRequest(context) {
           logoUrl: String(it.logoUrl || '').trim()
         }))
         .filter((it) => it.name.length > 0);
+      if (!data.published) data = { published: false, intro: '', items: [] };
     }
 
     if (id && Array.isArray(data)) {

@@ -269,13 +269,14 @@ async function editWork(id) {
     editorState.type = 'works';
     setEditorDirty(false);
     document.getElementById('works-editor').style.display = 'block';
-    const item = id ? dataCache.works.find(i => i.id === id) : { id: Date.now().toString(), year: '', title: '', story: '', body: '', detailSections: [], image: '', awards: [] };
+    const item = id ? dataCache.works.find(i => i.id === id) : { id: Date.now().toString(), year: '', title: '', story: '', body: '', detailSections: [], image: '', youtubeUrl: '', awards: [] };
     document.getElementById('work-id').value = item.id;
     document.getElementById('work-year').value = item.year;
     document.getElementById('work-title').value = item.title;
     document.getElementById('work-story').value = item.story || '';
     document.getElementById('work-body').value = item.body || '';
     document.getElementById('work-image').value = item.image || '';
+    document.getElementById('work-youtube').value = item.youtubeUrl || '';
     document.getElementById('work-awards').value = (item.awards || []).join(', ');
     currentWorkSections =
       Array.isArray(item.detailSections) && item.detailSections.length > 0
@@ -306,6 +307,7 @@ async function saveWork() {
     body: document.getElementById('work-body').value,
     detailSections,
     image: document.getElementById('work-image').value,
+    youtubeUrl: document.getElementById('work-youtube').value.trim(),
     awards: awardsStr ? awardsStr.split(',').map((s) => s.trim()).filter((s) => s !== '') : [],
   };
   const idx = dataCache.works.findIndex(i => i.id === id);

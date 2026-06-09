@@ -13,7 +13,10 @@ export function mergeWorksWithDefaults(remoteWorks, defaults) {
   return defaults.map((def) => {
     const remote = remoteMap.get(def.id);
     const image = remote && typeof remote.image === 'string' ? remote.image.trim() : '';
-    const merged = image ? { ...def, image } : def;
+    const youtubeUrl = remote && typeof remote.youtubeUrl === 'string' ? remote.youtubeUrl.trim() : '';
+    let merged = def;
+    if (image) merged = { ...merged, image };
+    if (youtubeUrl) merged = { ...merged, youtubeUrl };
     return normalizeWork(merged);
   });
 }
